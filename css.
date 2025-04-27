@@ -1,0 +1,41 @@
+/* public/landing.css */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.hero {
+  background: linear-gradient(135deg, #7C3AED, #1E3A8A);
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  background: white;
+  color: #7C3AED;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.features {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.features div {
+  margin-bottom: 30px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #ddd;
+  font-size: 14px;
+}
