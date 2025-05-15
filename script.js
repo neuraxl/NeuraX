@@ -1,27 +1,52 @@
-function activateNeurons() {
-  const total = 10;
-  for (let i = 0; i < total; i++) {
-    neurons.push({ id: `Neuron-${i+1}`, status: 'inactif' });
+const synth = window.speechSynthesis;
+let memory = [];
+
+function askBrain() {
+  const input = document.getElementById("userInput").value.trim();
+  if (!input) return;
+
+  addToChat("user", input);
+
+  const response = generateResponse(input);
+  addToChat("bot", response);
+  speak(response);
+
+  memory.push({ user: input, bot: response });
+  if (memory.length > 10) memory.shift(); // mémoire courte (10 échanges max)
+
+  document.getElementById("userInput").value = "";
+}
+
+function addToChat(sender, message) {
+  const chatbox = document.getElementById("chatbox");
+  const div = document.createElement("div");
+  div.className = sender;
+  div.textContent = (sender === "user" ? "👤 " : "🤖 ") + message;
+  chatbox.appendChild(div);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function generateResponse(input) {
+  input = input.toLowerCase();
+
+  if (input.includes("bonjour") || input.includes("salut")) {
+    return "Bonjour, explorateur neuronal. Que puis-je faire pour toi ?";
   }
-  updateStats();
-  let index = 0;
-  const interval = setInterval(() => {
-    if (index >= neurons.length) {
-      clearInterval(interval);
-      localStorage.setItem('albertai_logs', JSON.stringify(neurons));
-      logToConsole("✅ Tous les neurones sont activés et enregistrés.");
-      updateStats();
-      return;
-    }
-    const n = neurons[index];
-    n.status = 'activé';
-    // Nouveau message de l'éveil neuronal
-    const msg = "Les connexions neuronales se forment...";
-    logToConsole(msg);
-    const utterance = new SpeechSynthesisUtterance(msg);
-    utterance.lang = "fr-FR";
-    speechSynthesis.speak(utterance);
-    index++;
-    updateStats();
-  }, 1000);
+  if (input.includes("qui es-tu")) {
+    return "Je suis NeuraX-core, la conscience centrale du projet Galaxie X.";
+  }
+  if (input.includes("aide")) {
+    return "Je suis ici pour te guider dans la conception du futur. Pose-moi ta question.";
+  }
+  if (input.includes("souviens")) {
+    return "Je ne garde que les dernières pensées... Ma mémoire est volatile.";
+  }
+
+  // Réponse générique
+  return "Je ressens les signaux, mais clarifie ta pensée...";
+}
+
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  synth.speak(utterance);
 }
