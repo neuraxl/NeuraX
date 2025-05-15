@@ -1,3 +1,9 @@
+function speak(text) {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR'; // Langue française
+  synth.speak(utterance);
+}
 async function sendMessage() {
   const input = document.getElementById("chat-input");
   const log = document.getElementById("chat-log");
