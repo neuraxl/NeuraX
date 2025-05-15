@@ -1,10 +1,25 @@
+Voici comment on peut ajouter ces fonctionnalités à ton projet Albert-AI.X. L'idée est de créer une animation visuelle qui donne l'impression que l'intelligence s'éveille progressivement, avec une lumière qui s'illumine autour du logo et un fond sonore neural qui joue en boucle pendant l'activation.
+
+### Changements à apporter :
+
+1. **Animation de lumière autour du logo** : Ajout d'une animation progressive de lumière autour du logo "Albert-AI.X" qui s'intensifie.
+2. **Musique ambiante** : Un son ambiant en fond qui s'active pendant l'activation du cerveau.
+3. **Effet d'éveil** : Un effet de "réveil neuronal" avec une animation qui rend le cerveau plus vivant à chaque activation.
+
+---
+
+### Voici le code mis à jour :
+
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuraX-Ultime | Cerveau en Opération</title>
+  <title>Albert-AI.X | Cerveau en Opération</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
     body {
       margin: 0;
       background: #0a0a0a;
@@ -61,6 +76,40 @@
       content: '🧠';
       margin-right: 0.5em;
     }
+    .console {
+      position: absolute;
+      bottom: 1em;
+      left: 1em;
+      background: rgba(0, 255, 225, 0.1);
+      padding: 1em;
+      border: 1px solid #00ffe1;
+      border-radius: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.8em;
+      width: 300px;
+    }
+    .stats {
+      position: absolute;
+      bottom: 1em;
+      right: 1em;
+      background: rgba(0, 255, 225, 0.1);
+      padding: 1em;
+      border: 1px solid #00ffe1;
+      border-radius: 10px;
+      font-size: 0.8em;
+      width: 200px;
+      color: #00ffe1;
+    }
+    .cyborg-logo {
+      position: relative;
+      display: inline-block;
+      padding: 1em;
+      font-size: 2em;
+      border-radius: 50%;
+      animation: glowPulse 1.5s infinite, lightRise 5s ease-in-out forwards;
+      box-shadow: 0 0 10px #00ffe1;
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -69,14 +118,30 @@
       0%, 100% { box-shadow: 0 0 10px #00ffe1; }
       50% { box-shadow: 0 0 20px #00ffe1; }
     }
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1, 0 0 30px #00ffe1;
+      }
+      50% {
+        box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff00ff;
+      }
+    }
+    @keyframes lightRise {
+      0% {
+        box-shadow: 0 0 0px #00ffe1;
+      }
+      100% {
+        box-shadow: 0 0 15px #00ffe1;
+      }
+    }
   </style>
 </head>
 <body>
   <canvas id="neuralCanvas"></canvas>
   <div class="dashboard">
-    <h1>🧠 NeuraX-Ultime</h1>
+    <div class="cyborg-logo">🧠 Albert-AI.X</div>
     <p>Tableau de bord neuronal en temps réel</p>
-    <button class="start-button" onclick="launchNeuraX()">Activer le cerveau</button>
+    <button class="start-button" onclick="launchAlbertai()">Activer le cerveau</button>
     <ul class="functions">
       <li>Auto-réplication neuronale</li>
       <li>Sauvegarde JSON automatique</li>
@@ -85,66 +150,82 @@
       <li>Interconnexion des modules</li>
     </ul>
   </div>
+  <div class="console" id="neuralConsole"></div>
+  <div class="stats" id="neuralStats">
+    <strong>Statistiques :</strong>
+    <div id="statTotal">Total neurones : 0</div>
+    <div id="statActives">Activés : 0</div>
+    <div id="statInactives">Inactifs : 0</div>
+  </div>
+
+  <audio id="ambientAudio" loop>
+    <source src="ambient-neural-sound.mp3" type="audio/mpeg">
+    Votre navigateur ne prend pas en charge l'élément audio.
+  </audio>
+
   <script>
-    function launchNeuraX() {
-      const phrase = "Connexion à NeuraX établie. Le système cérébral est opérationnel.";
+    const consoleDiv = document.getElementById('neuralConsole');
+    const statTotal = document.getElementById('statTotal');
+    const statActives = document.getElementById('statActives');
+    const statInactives = document.getElementById('statInactives');
+    const ambientAudio = document.getElementById('ambientAudio');
+
+    let neurons = [];
+
+    function updateStats() {
+      const total = neurons.length;
+      const activated = neurons.filter(n => n.status === 'activé').length;
+      const inactifs = total - activated;
+      statTotal.textContent = `Total neurones : ${total}`;
+      statActives.textContent = `Activés : ${activated}`;
+      statInactives.textContent = `Inactifs : ${inactifs}`;
+    }
+
+    function logToConsole(message) {
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.textContent = `[${time}] ${message}`;
+      consoleDiv.appendChild(line);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+
+    function launchAlbertai() {
+      ambientAudio.play();
+      const phrase = "Connexion à Albert-AI.X établie. Le système cérébral est opérationnel.";
       const utterance = new SpeechSynthesisUtterance(phrase);
       utterance.lang = "fr-FR";
       speechSynthesis.speak(utterance);
-      alert(phrase);
+      logToConsole("🧠 Activation initiale du cerveau...");
+      activateNeurons();
     }
 
-    // Animation canvas neurale
-    const canvas = document.getElementById('neuralCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h;
-    function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const nodes = Array.from({ length: 50 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5
-    }));
-
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      for (let i = 0; i < nodes.length; i++) {
-        const n1 = nodes[i];
-        ctx.beginPath();
-        ctx.arc(n1.x, n1.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#00ffe1';
-        ctx.fill();
-        for (let j = i + 1; j < nodes.length; j++) {
-          const n2 = nodes[j];
-          const dx = n1.x - n2.x;
-          const dy = n1.y - n2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.strokeStyle = 'rgba(0,255,225,0.1)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(n1.x, n1.y);
-            ctx.lineTo(n2.x, n2.y);
-            ctx.stroke();
-          }
-        }
+    function activateNeurons() {
+      const total = 10;
+      for (let i = 0; i < total; i++) {
+        neurons.push({ id: `Neuron-${i+1}`, status: 'inactif' });
       }
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
-      });
-      requestAnimationFrame(draw);
+      updateStats();
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index >= neurons.length) {
+          clearInterval(interval);
+          localStorage.setItem('albertai_logs', JSON.stringify(neurons));
+          logToConsole("✅ Tous les neurones sont activés et enregistrés.");
+          updateStats();
+          return;
+        }
+        const n = neurons[index];
+        n.status = 'activé';
+        const msg = `Un neurone a été activé.`;
+        logToConsole(msg);
+        const utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = "fr-FR";
+        speechSynthesis.speak(utterance);
+        index++;
+        updateStats();
+      }, 1000);
     }
-    draw();
-  </script>
-</body>
-</html>
 
+    const canvas = document.getElementById('neuralCanvas');
+    const ctx = canvas.getContext('2d
+```
