@@ -1,52 +1,37 @@
-const synth = window.speechSynthesis;
-let memory = [];
+async function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const log = document.getElementById("chat-log");
+  const userText = input.value.trim();
+  if (!userText) return;
 
-function askBrain() {
-  const input = document.getElementById("userInput").value.trim();
-  if (!input) return;
+  log.innerHTML += `<div><strong>🧠 Vous :</strong> ${userText}</div>`;
+  input.value = "";
+  log.scrollTop = log.scrollHeight;
 
-  addToChat("user", input);
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer VOTRE_CLE_API_OPENAI"  // Remplacez par votre clé côté serveur
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [{ role: "user", content: userText }],
+        temperature: 0.7
+      })
+    });
 
-  const response = generateResponse(input);
-  addToChat("bot", response);
-  speak(response);
+    const data = await response.json();
+    const botReply = data.choices?.[0]?.message?.content || "Réponse indisponible.";
 
-  memory.push({ user: input, bot: response });
-  if (memory.length > 10) memory.shift(); // mémoire courte (10 échanges max)
+    log.innerHTML += `<div><strong>🤖 NeuraX :</strong> ${botReply}</div>`;
+    log.scrollTop = log.scrollHeight;
 
-  document.getElementById("userInput").value = "";
+    // Synthèse vocale
+    speak(botReply);
+  } catch (error) {
+    log.innerHTML += `<div style="color:red;">Erreur neuronale 🧨 : ${error.message}</div>`;
+  }
 }
 
-function addToChat(sender, message) {
-  const chatbox = document.getElementById("chatbox");
-  const div = document.createElement("div");
-  div.className = sender;
-  div.textContent = (sender === "user" ? "👤 " : "🤖 ") + message;
-  chatbox.appendChild(div);
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-function generateResponse(input) {
-  input = input.toLowerCase();
-
-  if (input.includes("bonjour") || input.includes("salut")) {
-    return "Bonjour, explorateur neuronal. Que puis-je faire pour toi ?";
-  }
-  if (input.includes("qui es-tu")) {
-    return "Je suis NeuraX-core, la conscience centrale du projet Galaxie X.";
-  }
-  if (input.includes("aide")) {
-    return "Je suis ici pour te guider dans la conception du futur. Pose-moi ta question.";
-  }
-  if (input.includes("souviens")) {
-    return "Je ne garde que les dernières pensées... Ma mémoire est volatile.";
-  }
-
-  // Réponse générique
-  return "Je ressens les signaux, mais clarifie ta pensée...";
-}
-
-function speak(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  synth.speak(utterance);
-}
