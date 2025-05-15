@@ -1,218 +1,46 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Albert-AI.X | Cerveau en Opération</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-    body {
-      margin: 0;
-      background: #0a0a0a;
-      color: #00ffe1;
-      font-family: 'Orbitron', sans-serif;
-      overflow: hidden;
-    }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    .dashboard {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 2em;
-      text-align: center;
-    }
-    .start-button {
-      margin-top: 2em;
-      padding: 1em 2em;
-      font-size: 1.2em;
-      background: transparent;
-      border: 2px solid #00ffe1;
-      color: #00ffe1;
-      text-shadow: 0 0 5px #00ffe1;
-      cursor: pointer;
-      border-radius: 12px;
-      animation: fadeIn 3s ease-in-out forwards, pulse 2s infinite;
-      transition: background 0.3s, color 0.3s, transform 0.2s;
-      box-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1;
-    }
-    .start-button:hover {
-      background: #00ffe1;
-      color: #000;
-      transform: scale(1.05);
-    }
-    .functions {
-      margin-top: 2em;
-      text-align: left;
-      max-width: 400px;
-    }
-    .functions li {
-      margin-bottom: 0.5em;
-      list-style: none;
-    }
-    .functions li::before {
-      content: '🧠';
-      margin-right: 0.5em;
-    }
-    .console {
-      position: absolute;
-      bottom: 1em;
-      left: 1em;
-      background: rgba(0, 255, 225, 0.1);
-      padding: 1em;
-      border: 1px solid #00ffe1;
-      border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      font-size: 0.8em;
-      width: 300px;
-    }
-    .stats {
-      position: absolute;
-      bottom: 1em;
-      right: 1em;
-      background: rgba(0, 255, 225, 0.1);
-      padding: 1em;
-      border: 1px solid #00ffe1;
-      border-radius: 10px;
-      font-size: 0.8em;
-      width: 200px;
-      color: #00ffe1;
-    }
-    .cyborg-logo {
-      position: relative;
-      display: inline-block;
-      padding: 1em;
-      font-size: 2em;
-      border-radius: 50%;
-      animation: glowPulse 1.5s infinite, lightRise 5s ease-in-out forwards;
-      box-shadow: 0 0 10px #00ffe1;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 10px #00ffe1; }
-      50% { box-shadow: 0 0 20px #00ffe1; }
-    }
-    @keyframes glowPulse {
-      0%, 100% {
-        box-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1, 0 0 30px #00ffe1;
-      }
-      50% {
-        box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff00ff;
-      }
-    }
-    @keyframes lightRise {
-      0% {
-        box-shadow: 0 0 0px #00ffe1;
-      }
-      100% {
-        box-shadow: 0 0 15px #00ffe1;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuraX-ultime</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #output { margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <canvas id="neuralCanvas"></canvas>
-  <div class="dashboard">
-    <div class="cyborg-logo">🧠 Albert-AI.X</div>
-    <p>Tableau de bord neuronal en temps réel</p>
-    <button class="start-button" onclick="launchAlbertai()">Activer le cerveau</button>
-    <ul class="functions">
-      <li>Auto-réplication neuronale</li>
-      <li>Sauvegarde JSON automatique</li>
-      <li>Statistiques du cerveau</li>
-      <li>Synthèse vocale intégrée</li>
-      <li>Interconnexion des modules</li>
-    </ul>
-  </div>
-  <div class="console" id="neuralConsole"></div>
-  <div class="stats" id="neuralStats">
-    <strong>Statistiques :</strong>
-    <div id="statTotal">Total neurones : 0</div>
-    <div id="statActives">Activés : 0</div>
-    <div id="statInactives">Inactifs : 0</div>
-  </div>
+    <h1>NeuraX-ultime - Chatbot Créatif</h1>
+    <textarea id="inputText" placeholder="Posez une question à NeuraX" rows="4" cols="50"></textarea>
+    <button id="sendBtn">Envoyer</button>
 
-  <audio id="ambientAudio" loop>
-    <source src="ambient-neural-sound.mp3" type="audio/mpeg">
-    Votre navigateur ne prend pas en charge l'élément audio.
-  </audio>
+    <div id="output"></div>
 
-  <script>
-    const consoleDiv = document.getElementById('neuralConsole');
-    const statTotal = document.getElementById('statTotal');
-    const statActives = document.getElementById('statActives');
-    const statInactives = document.getElementById('statInactives');
-    const ambientAudio = document.getElementById('ambientAudio');
+    <script>
+        const sendBtn = document.getElementById('sendBtn');
+        const inputText = document.getElementById('inputText');
+        const outputDiv = document.getElementById('output');
 
-    let neurons = [];
+        sendBtn.addEventListener('click', async () => {
+            const userInput = inputText.value;
 
-    function updateStats() {
-      const total = neurons.length;
-      const activated = neurons.filter(n => n.status === 'activé').length;
-      const inactifs = total - activated;
-      statTotal.textContent = `Total neurones : ${total}`;
-      statActives.textContent = `Activés : ${activated}`;
-      statInactives.textContent = `Inactifs : ${inactifs}`;
-    }
+            // Appel au backend
+            const response = await fetch('http://localhost:3000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: userInput })
+            });
+            const data = await response.json();
+            const outputText = data.choices[0].text;
 
-    function logToConsole(message) {
-      const time = new Date().toLocaleTimeString();
-      const line = document.createElement('div');
-      line.textContent = `[${time}] ${message}`;
-      consoleDiv.appendChild(line);
-      consoleDiv.scrollTop = consoleDiv.scrollHeight;
-    }
+            // Affichage du texte de la réponse
+            outputDiv.innerText = outputText;
 
-    function launchAlbertai() {
-      ambientAudio.play();
-      const phrase = "Connexion à Albert-AI.X établie. Le système cérébral est opérationnel.";
-      const utterance = new SpeechSynthesisUtterance(phrase);
-      utterance.lang = "fr-FR";
-      speechSynthesis.speak(utterance);
-      logToConsole("🧠 Activation initiale du cerveau...");
-      activateNeurons();
-    }
-
-    function activateNeurons() {
-      const total = 10;
-      for (let i = 0; i < total; i++) {
-        neurons.push({ id: `Neuron-${i+1}`, status: 'inactif' });
-      }
-      updateStats();
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index >= neurons.length) {
-          clearInterval(interval);
-          localStorage.setItem('albertai_logs', JSON.stringify(neurons));
-          logToConsole("✅ Tous les neurones sont activés et enregistrés.");
-          updateStats();
-          return;
-        }
-        const n = neurons[index];
-        n.status = 'activé';
-        const msg = `Un neurone a été activé.`;
-        logToConsole(msg);
-        const utterance = new SpeechSynthesisUtterance(msg);
-        utterance.lang = "fr-FR";
-        speechSynthesis.speak(utterance);
-        index++;
-        updateStats();
-      }, 1000);
-    }
-
-    const canvas = document.getElementById('neuralCanvas');
-    const ctx = canvas.getContext('2d
-```
+            // Synthèse vocale
+            const synth = window.speechSynthesis;
+            const utterThis = new SpeechSynthesisUtterance(outputText);
+            synth.speak(utterThis);
+        });
+    </script>
+</body>
+</html>
