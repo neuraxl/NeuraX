@@ -1,154 +1,143 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuraX-Ultime | Cerveau en Opération</title>
-  <style>
-    body {
-      margin: 0;
-      background: #0a0a0a;
-      color: #00ffe1;
-      font-family: 'Orbitron', sans-serif;
-      overflow: hidden;
-    }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    .dashboard {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 2em;
-      text-align: center;
-    }
-    .start-button {
-      margin-top: 2em;
-      padding: 1em 2em;
-      font-size: 1.2em;
-      background: transparent;
-      border: 2px solid #00ffe1;
-      color: #00ffe1;
-      text-shadow: 0 0 5px #00ffe1;
-      cursor: pointer;
-      border-radius: 12px;
-      animation: fadeIn 3s ease-in-out forwards, pulse 2s infinite;
-      transition: background 0.3s, color 0.3s, transform 0.2s;
-      box-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1;
-    }
-    .start-button:hover {
-      background: #00ffe1;
-      color: #000;
-      transform: scale(1.05);
-    }
-    .functions {
-      margin-top: 2em;
-      text-align: left;
-      max-width: 400px;
-    }
-    .functions li {
-      margin-bottom: 0.5em;
-      list-style: none;
-    }
-    .functions li::before {
-      content: '🧠';
-      margin-right: 0.5em;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 10px #00ffe1; }
-      50% { box-shadow: 0 0 20px #00ffe1; }
-    }
-  </style>
-</head>
-<body>
-  <canvas id="neuralCanvas"></canvas>
-  <div class="dashboard">
-    <h1>🧠 NeuraX-Ultime</h1>
-    <p>Tableau de bord neuronal en temps réel</p>
-    <button class="start-button" onclick="launchNeuraX()">Activer le cerveau</button>
-    <ul class="functions">
-      <li>Auto-réplication neuronale</li>
-      <li>Sauvegarde JSON automatique</li>
-      <li>Statistiques du cerveau</li>
-      <li>Synthèse vocale intégrée</li>
-      <li>Interconnexion des modules</li>
-    </ul>
-  </div>
-  <script>
-    function launchNeuraX() {
-      const phrase = "Connexion à NeuraX établie. Le système cérébral est opérationnel.";
-      const utterance = new SpeechSynthesisUtterance(phrase);
-      utterance.lang = "fr-FR";
-      speechSynthesis.speak(utterance);
-      alert(phrase);
-    }
-
-    // Animation canvas neurale
-    const canvas = document.getElementById('neuralCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h;
-    function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const nodes = Array.from({ length: 50 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5
-    }));
-
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      for (let i = 0; i < nodes.length; i++) {
-        const n1 = nodes[i];
-        ctx.beginPath();
-        ctx.arc(n1.x, n1.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#00ffe1';
-        ctx.fill();
-        for (let j = i + 1; j < nodes.length; j++) {
-          const n2 = nodes[j];
-          const dx = n1.x - n2.x;
-          const dy = n1.y - n2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.strokeStyle = 'rgba(0,255,225,0.1)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(n1.x, n1.y);
-            ctx.lineTo(n2.x, n2.y);
-            ctx.stroke();
-          }
-        }
-      }
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
-      });
-      requestAnimationFrame(draw);
-    }
-    draw();
-  </script>
-  <div class="log-panel">
-  <h3>🧾 Logs Neuronaux</h3>
-  <pre id="log-content">Initialisation du cerveau NeuraX...</pre>
+<div id="chat-container" style="position:relative; width: 400px; font-family: 'Courier New', monospace; background:#0b0c14; color:#0ff; padding: 16px; border-radius: 12px; overflow-y: auto; max-height: 300px;">
+  <!-- Réponses du chat ici -->
 </div>
 
-</body>
-</html>
+<script>
+  const chat = document.getElementById('chat-container');
+
+  function createCosmicAvatar() {
+    const avatarNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(avatarNS, 'svg');
+    svg.setAttribute('width', '70');
+    svg.setAttribute('height', '70');
+    svg.setAttribute('viewBox', '0 0 100 100');
+    svg.style.marginRight = '12px';
+
+    // Définir les dégradés pour l'effet holographique
+    const defs = document.createElementNS(avatarNS, 'defs');
+
+    const coreGradient = document.createElementNS(avatarNS, 'radialGradient');
+    coreGradient.setAttribute('id', 'coreGradient');
+    coreGradient.setAttribute('cx', '0.5');
+    coreGradient.setAttribute('cy', '0.5');
+    coreGradient.setAttribute('r', '0.5');
+    coreGradient.innerHTML = `
+      <stop offset="0%" stop-color="#0ff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#004" stop-opacity="0" />
+    `;
+
+    const planetGradient = document.createElementNS(avatarNS, 'radialGradient');
+    planetGradient.setAttribute('id', 'planetGradient');
+    planetGradient.setAttribute('cx', '0.5');
+    planetGradient.setAttribute('cy', '0.5');
+    planetGradient.setAttribute('r', '0.5');
+    planetGradient.innerHTML = `
+      <stop offset="0%" stop-color="#0ff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#003366" stop-opacity="0" />
+    `;
+
+    defs.appendChild(coreGradient);
+    defs.appendChild(planetGradient);
+    svg.appendChild(defs);
+
+    // Noyau galaxie (centre)
+    const core = document.createElementNS(avatarNS, 'circle');
+    core.setAttribute('cx', '50');
+    core.setAttribute('cy', '50');
+    core.setAttribute('r', '15');
+    core.setAttribute('fill', 'url(#coreGradient)');
+    core.style.filter = 'drop-shadow(0 0 6px #0ff)';
+    svg.appendChild(core);
+
+    // Création des orbites des planètes
+    for (let i = 1; i <= 3; i++) {
+      const orbit = document.createElementNS(avatarNS, 'circle');
+      orbit.setAttribute('cx', '50');
+      orbit.setAttribute('cy', '50');
+      orbit.setAttribute('r', 15 + i * 10);
+      orbit.setAttribute('stroke', '#0ff');
+      orbit.setAttribute('stroke-opacity', '0.2');
+      orbit.setAttribute('stroke-width', '1');
+      orbit.setAttribute('fill', 'none');
+      svg.appendChild(orbit);
+    }
+
+    // Planètes en orbite (animées)
+    const planets = [];
+    for (let i = 0; i < 3; i++) {
+      const planet = document.createElementNS(avatarNS, 'circle');
+      planet.setAttribute('r', '4');
+      planet.setAttribute('fill', 'url(#planetGradient)');
+      planet.style.filter = 'drop-shadow(0 0 4px #0ff)';
+      svg.appendChild(planet);
+      planets.push({el: planet, orbitRadius: 25 + i * 10, angle: Math.random() * 360, speed: 0.02 + i * 0.01});
+    }
+
+    // Vaisseau spatial (triangle)
+    const spaceship = document.createElementNS(avatarNS, 'polygon');
+    spaceship.setAttribute('points', '0,-5 10,0 0,5');
+    spaceship.setAttribute('fill', '#0ff');
+    spaceship.style.filter = 'drop-shadow(0 0 5px #0ff)';
+    svg.appendChild(spaceship);
+
+    // Position initiale vaisseau
+    let shipAngle = 0;
+    const shipOrbitRadius = 60;
+
+    // Animation (rotation et orbites)
+    function animate() {
+      // Core rotation lente
+      core.style.transform = `rotate(${Date.now() / 1000 * 20}deg)`;
+      core.style.transformOrigin = '50% 50%';
+
+      // Planètes en orbite
+      planets.forEach(p => {
+        p.angle += p.speed;
+        const rad = p.angle * Math.PI / 180;
+        const x = 50 + p.orbitRadius * Math.cos(rad);
+        const y = 50 + p.orbitRadius * Math.sin(rad);
+        p.el.setAttribute('cx', x);
+        p.el.setAttribute('cy', y);
+      });
+
+      // Vaisseau spatial qui tourne autour
+      shipAngle += 0.8;
+      const rad = shipAngle * Math.PI / 180;
+      const sx = 50 + shipOrbitRadius * Math.cos(rad);
+      const sy = 50 + shipOrbitRadius * Math.sin(rad);
+      spaceship.setAttribute('transform', `translate(${sx},${sy}) rotate(${shipAngle + 90})`);
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    return svg;
+  }
+
+  function cosmicResponse(text) {
+    const respDiv = document.createElement('div');
+    respDiv.style.display = 'flex';
+    respDiv.style.alignItems = 'center';
+    respDiv.style.margin = '10px 0';
+    respDiv.style.fontSize = '14px';
+    respDiv.style.lineHeight = '1.4';
+    respDiv.style.color = '#0ff';
+    respDiv.style.textShadow = '0 0 5px #0ff';
+
+    const avatar = createCosmicAvatar();
+    avatar.style.flexShrink = '0';
+
+    const message = document.createElement('div');
+    message.textContent = text;
+    message.style.flex = '1';
+
+    respDiv.appendChild(avatar);
+    respDiv.appendChild(message);
+
+    chat.appendChild(respDiv);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  // Test d'affichage direct
+  cosmicResponse("Bienvenue, explorateur des étoiles. La voie lactée s'ouvre devant toi. Que souhaites-tu savoir ?");
+</script>
