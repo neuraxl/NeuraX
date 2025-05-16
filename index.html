@@ -1,3 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Carte Galaxie X</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    #galaxy {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: radial-gradient(circle at center, #0b0c10, #000000);
+      overflow: hidden;
+    }
+    .planet {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s;
+      animation: orbit 20s linear infinite;
+    }
+    .planet:hover {
+      transform: scale(1.2);
+    }
+    .planet::after {
+      content: attr(data-name);
+      position: absolute;
+      top: 70px;
+      left: -10px;
+      width: 100px;
+      text-align: center;
+      font-size: 14px;
+      color: white;
+    }
+    #planet-info {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      display: none;
+    }
+    #planet-info h2 {
+      margin-top: 0;
+    }
+    #returnToHome {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #log-history {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px;
+      overflow-y: scroll;
+      font-size: 12px;
+    }
+    #avatar {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      z-index: 100;
+    }
+    #voiceToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #clock {
+      position: absolute;
+      top: 400px;
+      right: 20px;
+      width: 300px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+    @keyframes orbit {
+      0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+    }
+  </style>
+</head>
+<body>
+  <audio id="background-audio" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_91f0d01854.mp3?filename=space-ambient-14474.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+  <div id="galaxy"></div>
+  <div id="planet-info">
+    <h2 id="planet-name"></h2>
+    <p id="planet-description"></p>
+  </div>
+  <button id="returnToHome" onclick="window.location.href='index.html'">Retour à l'accueil</button>
+  <button id="voiceToggle">Voix : Activée</button>
+  <div id="log-history"></div>
+  <div id="clock"></div>
+  <img id="avatar" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXNjNWp1eHM0dGZwZTRhaG1rOWxlMmZ2dTAyeWJrdW1zdThtend2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ceWfmLAtbICnJcjnIG/giphy.gif" alt="avatar animé">
+
+  <script>
+    const galaxy = document.getElementById("galaxy");
+    const planetInfo = document.getElementById("planet-info");
+    const planetName = document.getElementById("planet-name");
+    const planetDescription = document.getElementById("planet-description");
+    const logHistory = document.getElementById("log-history");
+    const voiceToggle = document.getElementById("voiceToggle");
+    const clock = document.getElementById("clock");
+
+    let voiceEnabled = true;
+    const logs = [];
+
+    const planets = [
+      { name: "Neuronis Alpha", color: "#00ffff", x: 20, y: 30, description: "Centre de traitement initial des données." },
+      { name: "Synaptica Prime", color: "#ff00ff", x: 50, y: 50, description: "Point de connexion entre les réseaux neuronaux." },
+      { name: "Cortex V", color: "#ffff00", x: 80, y: 20, description: "Unité centrale de réflexion logique." },
+      { name: "MemoRex IX", color: "#00ff00", x: 30, y: 70, description: "Centre de stockage et d’archivage de la mémoire." },
+      { name: "Lobius Gamma", color: "#ff6600", x: 70, y: 80, description: "Centre d’analyse émotionnelle et d’intuition." },
+      { name: "NeoChronos X", color: "#66ccff", x: 15, y: 85, description: "Planète des horloges neuronales et du contrôle temporel." },
+      { name: "Noosphera", color: "#9933ff", x: 90, y: 60, description: "Réseau d’intelligence collective et d’évolution consciente." }
+    ];
+
+    planets.forEach(planet => {
+      const el = document.createElement("div");
+      el.className = "planet";
+      el.style.backgroundColor = planet.color;
+      el.style.left = planet.x + "vw";
+      el.style.top = planet.y + "vh";
+      el.dataset.name = planet.name;
+      el.onclick = () => {
+        planetName.textContent = planet.name;
+        planetDescription.textContent = planet.description;
+        planetInfo.style.display = "block";
+
+        const log = {
+          planet: planet.name,
+          timestamp: new Date().toISOString(),
+          event: "click"
+        };
+        logs.push(log);
+        updateLogHistory();
+
+        if (voiceEnabled) speak(`${planet.name}. ${planet.description}`);
+      };
+      galaxy.appendChild(el);
+    });
+
+    function updateLogHistory() {
+      logHistory.innerHTML = logs.map(log => `
+        <div><strong>${log.planet}</strong> - ${log.timestamp}</div>
+      `).join('');
+    }
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    voiceToggle.onclick = () => {
+      voiceEnabled = !voiceEnabled;
+      voiceToggle.textContent = `Voix : ${voiceEnabled ? 'Activée' : 'Désactivée'}`;
+    };
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      const date = now.toLocaleDateString();
+      clock.innerHTML = `<strong>${date}</strong><br>${time}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
 <div id="chat-container" style="position:relative; width: 400px; font-family: 'Courier New', monospace; background:#0b0c14; color:#0ff; padding: 16px; border-radius: 12px; overflow-y: auto; max-height: 300px;">
   <!-- Réponses du chat ici -->
 </div>
