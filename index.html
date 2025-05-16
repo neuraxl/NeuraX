@@ -1,207 +1,212 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<title>Galaxies Virtuelles - Univers Interactif</title>
-<style>
-  body {
-    margin: 0; background: #000; color: #fff; overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-  #universe {
-    position: relative; width: 100vw; height: 100vh;
-    background: radial-gradient(circle at center, #0b0c10 0%, #000 80%);
-    overflow: hidden;
-  }
-  .galaxy {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px dashed rgba(255,255,255,0.1);
-    animation: spinGalaxy linear infinite;
-  }
-  /* tailles différentes */
-  .galaxy.large { width: 400px; height: 400px; }
-  .galaxy.medium { width: 250px; height: 250px; }
-  .galaxy.small { width: 150px; height: 150px; }
-
-  @keyframes spinGalaxy {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .planet {
-    position: absolute;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.3s;
-    box-shadow: 0 0 8px 2px;
-  }
-  .planet:hover {
-    transform: scale(1.3);
-    box-shadow: 0 0 15px 5px;
-  }
-  .planet-label {
-    position: absolute;
-    top: 100%; left: 50%;
-    transform: translateX(-50%);
-    margin-top: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-    pointer-events: none;
-    color: #eee;
-    text-shadow: 0 0 5px #000;
-  }
-
-  #infoPanel {
-    position: fixed;
-    bottom: 20px; left: 50%;
-    transform: translateX(-50%);
-    background: rgba(20,20,30,0.85);
-    padding: 15px 25px;
-    border-radius: 12px;
-    max-width: 400px;
-    font-size: 14px;
-    display: none;
-    box-shadow: 0 0 15px #00ffff;
-  }
-  #infoPanel h2 {
-    margin: 0 0 10px;
-    font-weight: 700;
-    color: #00ffff;
-  }
-  #closeInfo {
-    cursor: pointer;
-    color: #ff5555;
-    font-weight: 700;
-    float: right;
-    margin-top: -30px;
-    margin-right: -10px;
-    user-select: none;
-  }
-
-</style>
+  <meta charset="UTF-8">
+  <title>Carte Galaxie X</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    #galaxy {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: radial-gradient(circle at center, #0b0c10, #000000);
+      overflow: hidden;
+    }
+    .planet {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s;
+      animation: orbit 20s linear infinite;
+    }
+    .planet:hover {
+      transform: scale(1.2);
+    }
+    .planet::after {
+      content: attr(data-name);
+      position: absolute;
+      top: 70px;
+      left: -10px;
+      width: 100px;
+      text-align: center;
+      font-size: 14px;
+      color: white;
+    }
+    #planet-info {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      display: none;
+    }
+    #planet-info h2 {
+      margin-top: 0;
+    }
+    #returnToHome {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #log-history {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px;
+      overflow-y: scroll;
+      font-size: 12px;
+    }
+    #avatar {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      z-index: 100;
+    }
+    #voiceToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #clock {
+      position: absolute;
+      top: 400px;
+      right: 20px;
+      width: 300px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+    @keyframes orbit {
+      0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+    }
+  </style>
 </head>
 <body>
-  <div id="universe"></div>
-
-  <div id="infoPanel">
-    <span id="closeInfo">✖</span>
-    <h2 id="infoName"></h2>
-    <p id="infoDesc"></p>
+  <audio id="background-audio" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_91f0d01854.mp3?filename=space-ambient-14474.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+  <div id="galaxy"></div>
+  <div id="planet-info">
+    <h2 id="planet-name"></h2>
+    <p id="planet-description"></p>
   </div>
+  <button id="returnToHome" onclick="window.location.href='index.html'">Retour à l'accueil</button>
+  <button id="voiceToggle">Voix : Activée</button>
+  <div id="log-history"></div>
+  <div id="clock"></div>
+  <img id="avatar" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXNjNWp1eHM0dGZwZTRhaG1rOWxlMmZ2dTAyeWJrdW1zdThtend2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ceWfmLAtbICnJcjnIG/giphy.gif" alt="avatar animé">
 
-<script>
-  // Définition des galaxies avec leurs planètes
-  const galaxies = [
-    {
-      name: "Galaxie Neurotica",
-      size: "large",
-      centerX: 150, // px
-      centerY: 150,
-      spinDuration: 40, // secondes
-      planets: [
-        { name: "Neuronis Alpha", color: "#00ffff", orbitRadius: 140, size: 30, angle: 0, description: "Centre de traitement initial des données." },
-        { name: "Synaptica Prime", color: "#ff00ff", orbitRadius: 110, size: 25, angle: 90, description: "Point de connexion entre les réseaux neuronaux." },
-        { name: "Cortex V", color: "#ffff00", orbitRadius: 90, size: 20, angle: 180, description: "Unité centrale de réflexion logique." },
-        { name: "MemoRex IX", color: "#00ff00", orbitRadius: 60, size: 20, angle: 270, description: "Centre de stockage et d’archivage de la mémoire." }
-      ]
-    },
-    {
-      name: "Galaxie Synaptrix",
-      size: "medium",
-      centerX: 600,
-      centerY: 300,
-      spinDuration: 30,
-      planets: [
-        { name: "Lobius Gamma", color: "#ff6600", orbitRadius: 110, size: 30, angle: 0, description: "Centre d’analyse émotionnelle et d’intuition." },
-        { name: "NeoChronos X", color: "#66ccff", orbitRadius: 80, size: 25, angle: 120, description: "Planète des horloges neuronales et du contrôle temporel." },
-        { name: "Noosphera", color: "#9933ff", orbitRadius: 60, size: 20, angle: 240, description: "Réseau d’intelligence collective et d’évolution consciente." }
-      ]
-    },
-    {
-      name: "Galaxie Quantumis",
-      size: "small",
-      centerX: 350,
-      centerY: 600,
-      spinDuration: 50,
-      planets: [
-        { name: "Quantum Cortex", color: "#00ced1", orbitRadius: 70, size: 25, angle: 0, description: "Centre quantique de calcul et d’intuition." },
-        { name: "Axon Prime", color: "#ff1493", orbitRadius: 45, size: 20, angle: 180, description: "Planète des connexions nerveuses ultra-rapides." }
-      ]
-    }
-  ];
+  <script>
+    const galaxy = document.getElementById("galaxy");
+    const planetInfo = document.getElementById("planet-info");
+    const planetName = document.getElementById("planet-name");
+    const planetDescription = document.getElementById("planet-description");
+    const logHistory = document.getElementById("log-history");
+    const voiceToggle = document.getElementById("voiceToggle");
+    const clock = document.getElementById("clock");
 
-  const universe = document.getElementById("universe");
-  const infoPanel = document.getElementById("infoPanel");
-  const infoName = document.getElementById("infoName");
-  const infoDesc = document.getElementById("infoDesc");
-  const closeInfo = document.getElementById("closeInfo");
+    let voiceEnabled = true;
+    const logs = [];
 
-  // Crée une galaxie et ses planètes
-  function createGalaxy(galaxy) {
-    const gal = document.createElement("div");
-    gal.classList.add("galaxy", galaxy.size);
-    gal.style.left = galaxy.centerX + "px";
-    gal.style.top = galaxy.centerY + "px";
-    gal.style.animationDuration = galaxy.spinDuration + "s";
-    gal.style.transformOrigin = "center center";
+    const planets = [
+      { name: "Neuronis Alpha", color: "#00ffff", x: 20, y: 30, description: "Centre de traitement initial des données." },
+      { name: "Synaptica Prime", color: "#ff00ff", x: 50, y: 50, description: "Point de connexion entre les réseaux neuronaux." },
+      { name: "Cortex V", color: "#ffff00", x: 80, y: 20, description: "Unité centrale de réflexion logique." },
+      { name: "MemoRex IX", color: "#00ff00", x: 30, y: 70, description: "Centre de stockage et d’archivage de la mémoire." },
+      { name: "Lobius Gamma", color: "#ff6600", x: 70, y: 80, description: "Centre d’analyse émotionnelle et d’intuition." },
+      { name: "NeoChronos X", color: "#66ccff", x: 15, y: 85, description: "Planète des horloges neuronales et du contrôle temporel." },
+      { name: "Noosphera", color: "#9933ff", x: 90, y: 60, description: "Réseau d’intelligence collective et d’évolution consciente." }
+    ];
 
-    // Planètes en orbite
-    galaxy.planets.forEach((planet, index) => {
-      const pl = document.createElement("div");
-      pl.classList.add("planet");
-      pl.style.width = planet.size + "px";
-      pl.style.height = planet.size + "px";
-      pl.style.backgroundColor = planet.color;
+    planets.forEach(planet => {
+      const el = document.createElement("div");
+      el.className = "planet";
+      el.style.backgroundColor = planet.color;
+      el.style.left = planet.x + "vw";
+      el.style.top = planet.y + "vh";
+      el.dataset.name = planet.name;
+      el.onclick = () => {
+        planetName.textContent = planet.name;
+        planetDescription.textContent = planet.description;
+        planetInfo.style.display = "block";
 
-      // Position orbitale initiale
-      // position relative au centre de la galaxie
-      const rad = planet.angle * (Math.PI / 180);
-      const x = galaxy.centerX + Math.cos(rad) * planet.orbitRadius;
-      const y = galaxy.centerY + Math.sin(rad) * planet.orbitRadius;
+        const log = {
+          planet: planet.name,
+          timestamp: new Date().toISOString(),
+          event: "click"
+        };
+        logs.push(log);
+        updateLogHistory();
 
-      pl.style.position = "absolute";
-      pl.style.left = (Math.cos(rad) * planet.orbitRadius + (gal.clientWidth / 2) - planet.size / 2) + "px";
-      pl.style.top = (Math.sin(rad) * planet.orbitRadius + (gal.clientHeight / 2) - planet.size / 2) + "px";
-
-      // On va stocker l'angle et rayon pour animation
-      pl.dataset.angle = planet.angle;
-      pl.dataset.orbitRadius = planet.orbitRadius;
-      pl.dataset.size = planet.size;
-      pl.dataset.color = planet.color;
-      pl.dataset.name = planet.name;
-      pl.dataset.description = planet.description;
-
-      // Label de la planète
-      const label = document.createElement("div");
-      label.className = "planet-label";
-      label.textContent = planet.name;
-      pl.appendChild(label);
-
-      // Clic pour afficher infos
-      pl.addEventListener("click", () => {
-        infoName.textContent = planet.name;
-        infoDesc.textContent = planet.description;
-        infoPanel.style.display = "block";
-      });
-
-      gal.appendChild(pl);
+        if (voiceEnabled) speak(`${planet.name}. ${planet.description}`);
+      };
+      galaxy.appendChild(el);
     });
 
-    universe.appendChild(gal);
-    return gal;
-  }
+    function updateLogHistory() {
+      logHistory.innerHTML = logs.map(log => `
+        <div><strong>${log.planet}</strong> - ${log.timestamp}</div>
+      `).join('');
+    }
 
-  // Générer toutes les galaxies
-  const galaxyElements = galaxies.map(g => createGalaxy(g));
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
 
-  // Fermer panneau info
-  closeInfo.addEventListener("click", () => {
-    infoPanel.style.display = "none";
-  });
+    voiceToggle.onclick = () => {
+      voiceEnabled = !voiceEnabled;
+      voiceToggle.textContent = `Voix : ${voiceEnabled ? 'Activée' : 'Désactivée'}`;
+    };
 
-  // Animation : rotation des planètes autour du centre galaxie
-  function animate() {
-    galaxyElements.forEach((gal, i) => {
-      const galaxy = galaxies[i];
-      const planets = gal.querySelectorAll
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      const date = now.toLocaleDateString();
+      clock.innerHTML = `<strong>${date}</strong><br>${time}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
