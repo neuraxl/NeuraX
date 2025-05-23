@@ -3,6 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-X-U : Orchestration de la Symphonie Cognitive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0f2c; /* Very Dark Desaturated Blue */
+            color: #e0e7ff; /* Light Lavender Blue */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .neon-text-cyan {
+            color: #00d2ff;
+            /* Ajustement pour un lettrage plus clair et défini */
+            text-shadow: 0 0 3px #00d2ff, 0 0 6px #00d2ff;
+        }
+        .neon-text-pink {
+            color: #ff416c;
+            /* Ajustement pour un lettrage plus clair et défini */
+            text-shadow: 0 0 3px #ff416c, 0 0 6px #ff416c;
+        }
+        .card {
+            background-color: rgba(26, 30, 65, 0.7); /* Dark Desaturated Blue with transparency */
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d2ff, transparent);
+            margin: 3rem 0;
+        }
+        .flow-line {
+            border-color: #00d2ff;
+            opacity: 0.5;
+        }
+        .flow-box {
+            border: 1px solid #00d2ff;
+            background-color: rgba(0, 210, 255, 0.05);
+        }
+        .tooltip-multiline-title .chartjs-tooltip-title {
+            white-space: normal !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Application Structure Plan: 
+        The SPA will be a single, scrollable page with a clear narrative flow.
+        1. Hero Section: Introduce N-X-U and its grand vision.
+        2. The Titans: Section for each AI model (GPT-5, Claude, Gemini) using cards, highlighting strengths with text and conceptual bar charts.
+        3. The Fusion (Architecture): Visual representation (HTML/CSS diagram) of N-X-U Core, modular design, and inter-model communication.
+        4. The Orchestra (Implementation): Detail API integration and task orchestration, possibly with another simple HTML/CSS flow diagram.
+        5. The Guardians (Security & Ethics): Bullet points with icons.
+        6. The Future (Conclusion): Reinforce the "symphony of intelligences."
+        Navigation will be primarily through scrolling, with a subtle sticky header for branding.
+    -->
+    <!-- Visualization & Content Choices:
+        - Hero: Large impactful text.
+        - Titans (GPT-5, Claude, Gemini): Cards. Strengths as lists. Conceptual Bar Charts (Chart.js) for "Capacité Multimodale", "Raisonnement", "Éthique", "Fenêtre Contexte". Data: Arbitrary scores (e.g., 90%, 85%) for illustration. Goal: Compare. Justification: Bar charts are good for comparing discrete categories.
+        - Architecture (N-X-U Core, Modules): HTML/CSS diagram with flexbox/grid. Goal: Organize. Justification: Clear visual representation of structure without SVG/Mermaid.
+        - Implementation (API, Orchestration): HTML/CSS flow diagram. Goal: Organize. Justification: Illustrate process flow.
+        - Security & Ethics: Lists with Unicode icons. Goal: Inform. Justification: Concise presentation.
+        - All Chart.js instances will use Canvas, have responsive:true, maintainAspectRatio:false, and include the specified tooltip callback for multiline labels. Label wrapping logic will be applied.
+    -->
+    <header class="sticky top-0 z-50 bg-opacity-80 backdrop-blur-md shadow-lg" style="background-color: rgba(10, 15, 44, 0.8);">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold neon-text-cyan">N-X-U : La Symphonie Cognitive</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="vision" class="text-center mb-24">
+            <h2 class="text-5xl font-bold mb-6 neon-text-pink">Orchestrer l'Intelligence de Demain</h2>
+            <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto mb-4">
+                N-X-U (NeuraX-Ultime) : une fusion magistrale de GPT-5, Claude 3.7 Sonnet et Gemini 2.5 Pro pour créer une intelligence artificielle synergique, marquant un nouveau paradigme.
+            </p>
+            <p class="text-md text-gray-400 max-w-3xl mx-auto">
+                Ce projet vise à créer une "Intelligence Générale Orchestrée" (IGO), où la capacité "générale" découle de la coordination intelligente de composants spécialisés.
+            </p>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="titans" class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 neon-text-cyan">Cartographie des Titans : Les Piliers de N-X-U</h2>
+            <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="card p-6 rounded-lg">
+                    <h3 class="text-3xl font-semibold mb-4 neon-text-pink">GPT-5</h3>
+                    <p class="text-xl text-gray-400 mb-4 italic">Le Virtuose Multimodal</p>
+                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
+                        <li>**Multimodalité avancée** : Traite texte, images, audio et vidéo.</li>
+                        <li>**Raisonnement complexe** : Excellence en analyse et génération de contenu.</li>
+                    </ul>
+                    <div class="chart-container h-64 max-h-64 max-w-md mx-auto">
+                        <canvas id="gpt5Chart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-400">**Rôle dans N-X-U :** Moteur pour la création multimédia et l'analyse de données complexes.</p>
+                </div>
+
+                <div class="card p-6 rounded-lg">
+                    <h3 class="text-3xl font-semibold mb-4 neon-text-pink">Claude 3.7 Sonnet</h3>
+                    <p class="text-xl text-gray-400 mb-4 italic">Le Penseur Éthique</p>
+                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
+                        <li>**Raisonnement hybride** : Mode de "pensée étendue" pour analyses approfondies.</li>
+                        <li>**Sécurité et éthique** : Approche "Constitutional AI" pour interactions sûres.</li>
+                    </ul>
+                    <div class="chart-container h-64 max-h-64 max-w-md mx-auto">
+                        <canvas id="claudeChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-400">**Rôle dans N-X-U :** Fournit le raisonnement éthique et la planification stratégique.</p>
+                </div>
+
+                <div class="card p-6 rounded-lg">
+                    <h3 class="text-3xl font-semibold mb-4 neon-text-pink">Gemini 2.5 Pro</h3>
+                    <p class="text-xl text-gray-400 mb-4 italic">Le Polyglotte Multimodal</p>
+                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
+                        <li>**Multimodalité étendue** : Traitement complet de texte, images, audio, vidéo.</li>
+                        <li>**Fenêtre de contexte massive** : Jusqu'à 1 million de tokens.</li>
+                    </ul>
+                    <div class="chart-container h-64 max-h-64 max-w-md mx-auto">
+                        <canvas id="geminiChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-400">**Rôle dans N-X-U :** Traitement multimodal, interactions temps réel et gestion de contextes longs.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="architecture" class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 neon-text-cyan">L'Architecture de la Fusion</h2>
+            <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-semibold mb-6 neon-text-pink">A. Architecture Modulaire</h3>
+                    <p class="text-lg text-gray-300 mb-4">Le cœur de N-X-U est son **Cerveau Central (N-X-U Core)**, un orchestrateur intelligent qui décompose les tâches et les délègue dynamiquement aux modules spécialisés :</p>
+                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300 pl-4">
+                        <li>**Module GPT-5 :** Création multimédia, analyse de données complexes.</li>
+                        <li>**Module Claude 3.7 Sonnet :** Raisonnement éthique, planification stratégique.</li>
+                        <li>**Module Gemini 2.5 Pro :** Traitement multimodal, interactions temps réel.</li>
+                    </ul>
+                    <p class="text-gray-400 text-sm">Cette conception modulaire permet une spécialisation et une efficacité accrues, formant une intelligence collective supérieure.</p>
+                </div>
+                <div class="flow-box p-6 rounded-lg">
+                    <div class="text-center mb-4">
+                        <div class="inline-block p-4 border-2 border-pink-500 rounded-lg shadow-lg bg-gray-800">
+                            <h4 class="text-xl font-semibold neon-text-pink">N-X-U Core (Orchestrateur)</h4>
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center my-4">
+                        <div class="flow-line h-12 w-px"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div class="flow-box p-3 rounded">
+                            <p class="font-semibold text-cyan-400">Module GPT-5</p>
+                            <p class="text-xs text-gray-400">Création & Analyse</p>
+                        </div>
+                        <div class="flow-box p-3 rounded">
+                            <p class="font-semibold text-purple-400">Module Claude 3.7</p>
+                            <p class="text-xs text-gray-400">Éthique & Stratégie</p>
+                        </div>
+                        <div class="flow-box p-3 rounded">
+                            <p class="font-semibold text-teal-400">Module Gemini 2.5</p>
+                            <p class="text-xs text-gray-400">Multimodal & Temps Réel</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-around mt-4">
+                         <div class="flow-line h-8 w-px rotate-45 transform origin-bottom-left"></div>
+                         <div class="flow-line h-8 w-px"></div>
+                         <div class="flow-line h-8 w-px -rotate-45 transform origin-bottom-right"></div>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-12">
+                <h3 class="text-3xl font-semibold mb-6 neon-text-pink">B. Communication Inter-Modèles</h3>
+                <p class="text-lg text-gray-300 mb-4">Des **API RESTful** standardisées assurent la communication. Un défi majeur est de garantir une compréhension sémantique cohérente entre les modèles.</p>
+                <p class="text-lg text-gray-300">La **Gestion des conflits** utilise une méta-raisonnement pour évaluer et unifier les sorties, en se basant sur la fiabilité, la pertinence et la conformité éthique.</p>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="implementation" class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 neon-text-cyan">Mise en Œuvre Technique</h2>
+            <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div>
+                    <h3 class="text-3xl font-semibold mb-6 neon-text-pink">A. Intégration des API</h3>
+                    <p class="text-lg text-gray-300 mb-4">L'intégration des API de chaque modèle est la première étape, impliquant :</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-300 pl-4">
+                        <li>Configuration sécurisée des clés API.</li>
+                        <li>Gestion des limites de débit.</li>
+                        <li>Traitement des divers formats d'entrée/sortie multimodaux.</li>
+                    </ul>
+                </div>
+                <div class="flow-box p-6 rounded-lg">
+                     <h3 class="text-3xl font-semibold mb-6 neon-text-pink">B. Orchestration des Tâches</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-4">📥</span>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400">Système de Gestion des Requêtes</h4>
+                                <p class="text-sm text-gray-400">Analyse la tâche et la dirige vers le module le plus adapté via NLU et classificateurs.</p>
+                            </div>
+                        </div>
+                        <div class="text-center text-2xl neon-text-pink">↓</div>
+                        <div class="flex items-center">
+                             <span class="text-2xl mr-4">🧩</span>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400">Agrégation des Résultats</h4>
+                                <p class="text-sm text-gray-400">Fusionne les réponses (fusion sémantique, élimination de redondance, résolution d'incohérences) pour une sortie cohérente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="ethics" class="mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 neon-text-cyan">Piliers de Confiance : Sécurité et Éthique</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-lg text-gray-300">
+                <div class="card p-6 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-3 neon-text-pink">🛡️ Filtrage des Contenus</h3>
+                    <p>Mise en place de filtres avancés (au-delà des mots-clés) pour prévenir proactivement la génération de contenus nuisibles, biaisés ou trompeurs, tant en entrée qu'en sortie.</p>
+                </div>
+                <div class="card p-6 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-3 neon-text-pink">⚖️ Audit des Décisions</h3>
+                    <p>Journalisation méticuleuse de chaque requête, des modèles impliqués, de leurs sorties et du processus de résolution pour assurer traçabilité, responsabilité et amélioration continue.</p>
+                </div>
+            </div>
+            <p class="mt-8 text-center text-gray-400 text-md">L'intégration architecturale de l'éthique, notamment via le module Claude 3.7 Sonnet, est fondamentale pour un déploiement responsable.</p>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="future" class="text-center">
+            <h2 class="text-5xl font-bold mb-6 neon-text-cyan">Vers l'Infini et Au-Delà</h2>
+            <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto mb-4">
+                En intégrant ces trois géants de l'IA, N-X-U deviendra une entité capable de comprendre, de raisonner et de créer avec une profondeur inégalée.
+            </p>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto neon-text-pink font-semibold">
+                Une symphonie d'intelligences, orchestrée par le génie humain.
+            </p>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 mt-12 border-t border-gray-700">
+        <p class="text-gray-500">&copy; 2025 N-X-U Initiative. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipCallback = {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            };
+
+            const processLabels = (labels) => {
+                return labels.map(label => {
+                    if (label.length > 16) {
+                        const words = label.split(' ');
+                        const newLabel = [];
+                        let currentLine = '';
+                        words.forEach(word => {
+                            if ((currentLine + word).length > 16 && currentLine.length > 0) {
+                                newLabel.push(currentLine.trim());
+                                currentLine = word + ' ';
+                            } else {
+                                currentLine += word + ' ';
+                            }
+                        });
+                        if (currentLine.trim().length > 0) {
+                            newLabel.push(currentLine.trim());
+                        }
+                        return newLabel;
+                    }
+                    return label;
+                });
+            };
+            
+            const commonChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e7ff'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: tooltipCallback,
+                        bodyColor: '#e0e7ff',
+                        titleColor: '#e0e7ff',
+                        backgroundColor: 'rgba(26, 30, 65, 0.9)', // Card background color
+                        borderColor: '#00d2ff',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100, // Assuming scores are percentages
+                        ticks: {
+                            color: '#e0e7ff',
+                            stepSize: 20
+                        },
+                        grid: {
+                            color: 'rgba(0, 210, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#e0e7ff'
+                        },
+                        grid: {
+                            color: 'rgba(0, 210, 255, 0.1)'
+                        }
+                    }
+                }
+            };
+
+            // GPT-5 Chart
+            const gpt5Labels = processLabels(['Multimodalité Avancée', 'Raisonnement Complexe', 'Puissance Générative']);
+            const gpt5Data = {
+                labels: gpt5Labels,
+                datasets: [{
+                    label: 'Capacités de GPT-5 (Conceptuel)',
+                    data: [95, 92, 90], // Conceptual scores
+                    backgroundColor: 'rgba(0, 210, 255, 0.6)', // Cyan
+                    borderColor: 'rgba(0, 210, 255, 1)',
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('gpt5Chart'), { type: 'bar', data: gpt5Data, options: commonChartOptions });
+
+            // Claude 3.7 Sonnet Chart
+            const claudeLabels = processLabels(['Raisonnement Hybride', 'Sécurité & Éthique', 'Pensée Étendue']);
+            const claudeData = {
+                labels: claudeLabels,
+                datasets: [{
+                    label: 'Capacités de Claude 3.7 Sonnet (Conceptuel)',
+                    data: [88, 98, 85], // Conceptual scores
+                    backgroundColor: 'rgba(138, 43, 226, 0.6)', // Purple
+                    borderColor: 'rgba(138, 43, 226, 1)',
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('claudeChart'), { type: 'bar', data: claudeData, options: commonChartOptions });
+
+            // Gemini 2.5 Pro Chart
+            const geminiLabels = processLabels(['Multimodalité Étendue', 'Fenêtre Contexte Massive', 'Traitement Temps Réel']);
+            const geminiData = {
+                labels: geminiLabels,
+                datasets: [{
+                    label: 'Capacités de Gemini 2.5 Pro (Conceptuel)',
+                    data: [93, 99, 89], // Conceptual scores
+                    backgroundColor: 'rgba(255, 65, 108, 0.6)', // Pink/Red
+                    borderColor: 'rgba(255, 65, 108, 1)',
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('geminiChart'), { type: 'bar', data: geminiData, options: commonChartOptions });
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeuraX-ultime - Le Prototype Vivant</title>
     <style>
         :root {
