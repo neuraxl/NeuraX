@@ -1,6 +1,551 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Face Magic Vision - Effets Faciaux Avancés</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      background: linear-gradient(45deg, #fff, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .video-container {
+      position: relative;
+      display: inline-block;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    #video {
+      display: block;
+      border-radius: 18px;
+    }
+    
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 18px;
+    }
+    
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      max-width: 800px;
+    }
+    
+    .control-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .control-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .control-btn.active {
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+    }
+    
+    .emoji-selector {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .emoji-btn {
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .emoji-btn:hover {
+      background: rgba(255,255,255,0.4);
+      transform: scale(1.1);
+    }
+    
+    .emoji-btn.selected {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      box-shadow: 0 5px 15px rgba(78,205,196,0.4);
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 15px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      #video, #canvas {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .control-btn {
+        width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>✨ Face Magic Vision</h1>
+    <p>Effets faciaux en temps réel avec IA</p>
+  </div>
+
+  <div class="video-container">
+    <video id="video" width="640" height="480" autoplay muted playsinline></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+  </div>
+
+  <div class="controls">
+    <button class="control-btn" id="emojiBtn" onclick="toggleEmoji()">🤪 Émoji sur le nez</button>
+    <button class="control-btn" id="blushBtn" onclick="toggleBlush()">💄 Blush sur les joues</button>
+    <button class="control-btn" id="cartoonBtn" onclick="toggleCartoon()">🎨 Effet Cartoon</button>
+    <button class="control-btn" id="mirrorBtn" onclick="toggleMirror()">🪞 Effet Miroir</button>
+    <button class="control-btn" onclick="captureImage()">📸 Capturer l'image</button>
+  </div>
+
+  <div class="emoji-selector">
+    <button class="emoji-btn selected" onclick="selectEmoji('😎')">😎</button>
+    <button class="emoji-btn" onclick="selectEmoji('🤪')">🤪</button>
+    <button class="emoji-btn" onclick="selectEmoji('😍')">😍</button>
+    <button class="emoji-btn" onclick="selectEmoji('🤣')">🤣</button>
+    <button class="emoji-btn" onclick="selectEmoji('😈')">😈</button>
+    <button class="emoji-btn" onclick="selectEmoji('🥳')">🥳</button>
+    <button class="emoji-btn" onclick="selectEmoji('🤖')">🤖</button>
+    <button class="emoji-btn" onclick="selectEmoji('👻')">👻</button>
+  </div>
+
+  <div class="status" id="status">
+    Chargement des modèles IA...
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const status = document.getElementById("status");
+    
+    // État des effets
+    let showEmoji = true;
+    let showBlush = true;
+    let applyCartoon = false;
+    let mirrorEffect = false;
+    let currentEmoji = "😎";
+    let isDetectionRunning = false;
+
+    // Mise à jour des boutons
+    function updateButtonStates() {
+      document.getElementById('emojiBtn').classList.toggle('active', showEmoji);
+      document.getElementById('blushBtn').classList.toggle('active', showBlush);
+      document.getElementById('cartoonBtn').classList.toggle('active', applyCartoon);
+      document.getElementById('mirrorBtn').classList.toggle('active', mirrorEffect);
+    }
+
+    // Démarrage de la caméra
+    async function startCamera() {
+      try {
+        status.textContent = "Accès à la caméra...";
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 640 }, 
+            height: { ideal: 480 },
+            facingMode: 'user'
+          } 
+        });
+        video.srcObject = stream;
+        
+        // Attendre que la vidéo soit prête
+        return new Promise((resolve, reject) => {
+          video.onloadedmetadata = () => {
+            video.play().then(() => {
+              status.textContent = "Caméra activée ✅";
+              resolve(true);
+            }).catch(reject);
+          };
+          video.onerror = reject;
+        });
+      } catch (e) {
+        status.textContent = "❌ Erreur d'accès à la caméra: " + e.message;
+        console.error("Erreur caméra:", e);
+        return false;
+      }
+    }
+
+    // Chargement des modèles IA
+    async function loadModels() {
+      try {
+        status.textContent = "Chargement des modèles IA...";
+        const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js/models';
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+        ]);
+        status.textContent = "Modèles IA chargés ✅";
+        return true;
+      } catch (e) {
+        status.textContent = "❌ Erreur de chargement des modèles";
+        console.error("Erreur modèles:", e);
+        return false;
+      }
+    }
+
+    // Fonctions de contrôle
+    function toggleEmoji() {
+      showEmoji = !showEmoji;
+      updateButtonStates();
+    }
+
+    function toggleBlush() {
+      showBlush = !showBlush;
+      updateButtonStates();
+    }
+
+    function toggleCartoon() {
+      applyCartoon = !applyCartoon;
+      updateButtonStates();
+    }
+
+    function toggleMirror() {
+      mirrorEffect = !mirrorEffect;
+      updateButtonStates();
+    }
+
+    function selectEmoji(emoji) {
+      currentEmoji = emoji;
+      // Mise à jour du bouton sélectionné
+      document.querySelectorAll('.emoji-btn').forEach(btn => btn.classList.remove('selected'));
+      // Trouver le bouton qui contient cet emoji
+      document.querySelectorAll('.emoji-btn').forEach(btn => {
+        if (btn.textContent === emoji) {
+          btn.classList.add('selected');
+        }
+      });
+    }
+
+    // Effet cartoon amélioré
+    function cartoonizeFrame(imageData) {
+      const data = imageData.data;
+      const width = imageData.width;
+      const height = imageData.height;
+      
+      // Création d'un buffer pour éviter les modifications en cours
+      const newData = new Uint8ClampedArray(data);
+      
+      for (let i = 0; i < data.length; i += 4) {
+        // Effet de quantification des couleurs (posterisation)
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Réduction du nombre de couleurs
+        newData[i] = Math.floor(r / 51) * 51;     // Rouge (6 niveaux)
+        newData[i + 1] = Math.floor(g / 51) * 51; // Vert (6 niveaux)
+        newData[i + 2] = Math.floor(b / 51) * 51; // Bleu (6 niveaux)
+        newData[i + 3] = data[i + 3]; // Alpha inchangé
+      }
+      
+      // Copie des données modifiées
+      for (let i = 0; i < data.length; i++) {
+        data[i] = newData[i];
+      }
+      
+      return imageData;
+    }
+
+    // Capture d'image
+    function captureImage() {
+      try {
+        // Créer un canvas temporaire pour la capture
+        const captureCanvas = document.createElement('canvas');
+        const captureCtx = captureCanvas.getContext('2d');
+        captureCanvas.width = canvas.width;
+        captureCanvas.height = canvas.height;
+        
+        // Copier le contenu du canvas principal
+        captureCtx.drawImage(canvas, 0, 0);
+        
+        // Télécharger l'image
+        const link = document.createElement('a');
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+        link.download = `face-magic-${timestamp}.png`;
+        link.href = captureCanvas.toDataURL('image/png', 1.0);
+        
+        // Ajouter temporairement au DOM et cliquer
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Animation de flash
+        canvas.style.transition = 'filter 0.15s ease';
+        canvas.style.filter = 'brightness(1.5) contrast(1.2)';
+        setTimeout(() => {
+          canvas.style.filter = 'none';
+        }, 150);
+        
+        // Notification de succès
+        status.textContent = "📸 Image capturée avec succès !";
+        setTimeout(() => {
+          status.textContent = "Détection active 🎭";
+        }, 2000);
+        
+      } catch (error) {
+        console.error("Erreur de capture:", error);
+        status.textContent = "❌ Erreur lors de la capture";
+        setTimeout(() => {
+          status.textContent = "Détection active 🎭";
+        }, 2000);
+      }
+    }
+
+    // Boucle de détection principale
+    video.addEventListener("loadeddata", async () => {
+      if (isDetectionRunning) return;
+      isDetectionRunning = true;
+      
+      // Attendre un peu pour s'assurer que la vidéo est stable
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const displaySize = { width: video.videoWidth, height: video.videoHeight };
+      faceapi.matchDimensions(canvas, displaySize);
+      
+      // Ajuster la taille du canvas à la vidéo
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      status.textContent = "Détection active 🎭";
+
+      const detect = async () => {
+        if (!video.videoWidth || !video.videoHeight || video.paused || video.ended) {
+          requestAnimationFrame(detect);
+          return;
+        }
+
+        try {
+          // Nettoyage du canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Sauvegarder l'état du contexte
+          ctx.save();
+          
+          // Application de l'effet miroir AVANT de dessiner
+          if (mirrorEffect) {
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+          }
+          
+          // Dessin de la vidéo
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Restaurer l'état pour les effets suivants
+          ctx.restore();
+          
+          // Application de l'effet cartoon APRÈS le dessin de base
+          if (applyCartoon) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            cartoonizeFrame(imageData);
+            ctx.putImageData(imageData, 0, 0);
+          }
+
+          // Détection des visages avec des paramètres plus permissifs
+          const detections = await faceapi.detectAllFaces(
+            video, 
+            new faceapi.TinyFaceDetectorOptions({ 
+              inputSize: 512, 
+              scoreThreshold: 0.3 
+            })
+          ).withFaceLandmarks();
+
+          if (detections.length > 0) {
+            const resizedDetections = faceapi.resizeResults(detections, displaySize);
+            
+            resizedDetections.forEach((detection) => {
+              const landmarks = detection.landmarks;
+              
+              if (showEmoji && landmarks) {
+                try {
+                  const nose = landmarks.getNose();
+                  if (nose && nose.length > 3) {
+                    const nosePoint = nose[3];
+                    
+                    // Position ajustée pour l'effet miroir
+                    let x = nosePoint.x;
+                    if (mirrorEffect) {
+                      x = canvas.width - nosePoint.x;
+                    }
+                    
+                    ctx.save();
+                    ctx.font = "42px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    
+                    // Ombre pour meilleure visibilité
+                    ctx.fillStyle = "rgba(0,0,0,0.3)";
+                    ctx.fillText(currentEmoji, x + 2, nosePoint.y - 28);
+                    
+                    // Émoji principal
+                    ctx.fillStyle = "white";
+                    ctx.fillText(currentEmoji, x, nosePoint.y - 30);
+                    ctx.restore();
+                  }
+                } catch (e) {
+                  console.warn("Erreur émoji:", e);
+                }
+              }
+
+              if (showBlush && landmarks) {
+                try {
+                  const jaw = landmarks.getJawOutline();
+                  if (jaw && jaw.length > 14) {
+                    let leftCheek = jaw[2];
+                    let rightCheek = jaw[14];
+                    
+                    // Ajustement pour l'effet miroir
+                    if (mirrorEffect) {
+                      leftCheek = { x: canvas.width - leftCheek.x, y: leftCheek.y };
+                      rightCheek = { x: canvas.width - rightCheek.x, y: rightCheek.y };
+                    }
+                    
+                    ctx.save();
+                    
+                    // Blush gauche
+                    const gradient1 = ctx.createRadialGradient(
+                      leftCheek.x, leftCheek.y, 0, 
+                      leftCheek.x, leftCheek.y, 25
+                    );
+                    gradient1.addColorStop(0, "rgba(255,105,180,0.4)");
+                    gradient1.addColorStop(1, "rgba(255,105,180,0)");
+                    
+                    ctx.fillStyle = gradient1;
+                    ctx.beginPath();
+                    ctx.arc(leftCheek.x, leftCheek.y, 25, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // Blush droit
+                    const gradient2 = ctx.createRadialGradient(
+                      rightCheek.x, rightCheek.y, 0, 
+                      rightCheek.x, rightCheek.y, 25
+                    );
+                    gradient2.addColorStop(0, "rgba(255,105,180,0.4)");
+                    gradient2.addColorStop(1, "rgba(255,105,180,0)");
+                    
+                    ctx.fillStyle = gradient2;
+                    ctx.beginPath();
+                    ctx.arc(rightCheek.x, rightCheek.y, 25, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    ctx.restore();
+                  }
+                } catch (e) {
+                  console.warn("Erreur blush:", e);
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Erreur de détection:", error);
+        }
+        
+        // Continuer la boucle
+        setTimeout(() => requestAnimationFrame(detect), 33); // ~30fps
+      };
+      
+      detect();
+    });
+
+    // Initialisation
+    async function init() {
+      updateButtonStates();
+      const modelsLoaded = await loadModels();
+      if (modelsLoaded) {
+        await startCamera();
+      } else {
+        status.textContent = "❌ Impossible de charger l'application";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>N-X-U : Orchestration de la Symphonie Cognitive</title>
