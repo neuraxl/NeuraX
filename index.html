@@ -1,3 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Face Magic Vision - Analyse Biométrique</title>
+  <style>
+    /* Basic reset for consistent styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body styling: full height, gradient background, centered content */
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-family: 'Inter', sans-serif; /* Changed to Inter for consistency */
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* Center content vertically */
+    }
+
+    /* Header styling for title and subtitle */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      background: linear-gradient(45deg, #fff, #ffd700);
+      /* Apply gradient to text */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Video and Canvas container styling */
+    .video-container {
+      position: relative;
+      display: inline-block;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    /* Video element styling */
+    #video {
+      display: block;
+      border-radius: 18px;
+      width: 100%; /* Make video fluid within its container */
+      height: auto;
+    }
+
+    /* Canvas element styling (overlay on video) */
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 18px;
+      width: 100%; /* Make canvas fluid within its container */
+      height: 100%;
+    }
+
+    /* Controls section styling */
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      max-width: 800px;
+    }
+
+    /* Individual control button styling */
+    .control-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .control-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .control-btn.active {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d); /* Greenish for active analysis */
+      box-shadow: 0 5px 15px rgba(78,205,196,0.4);
+    }
+
+    /* Status message styling */
+    .status {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 15px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .video-container {
+        width: 90%; /* Make container take more width on small screens */
+        max-width: 400px;
+      }
+
+      /* Video and canvas width are already 100% within container */
+      #video, #canvas {
+        height: auto;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .control-btn {
+        width: 250px; /* Fixed width for buttons on small screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header section -->
+  <div class="header">
+    <h1>✨ Face Magic Vision</h1>
+    <p>Analyse biométrique en temps réel avec IA</p>
+  </div>
+
+  <!-- Video and Canvas display area -->
+  <div class="video-container">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- Control buttons for starting/stopping analysis -->
+  <div class="controls">
+    <button class="control-btn" id="toggleAnalysisBtn" onclick="toggleAnalysis()">▶️ Démarrer l'analyse</button>
+    <button class="control-btn" onclick="captureImage()">📸 Capturer l'image</button>
+  </div>
+
+  <!-- Status display area -->
+  <div class="status" id="status">
+    Chargement des modèles IA...
+  </div>
+
+  <!-- Face-API.js library import -->
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script>
+    // Get references to the video, canvas, and status elements
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const status = document.getElementById("status");
+    const toggleAnalysisBtn = document.getElementById("toggleAnalysisBtn");
+
+    // State variables
+    let isAnalysisRunning = false; // Flag to control the analysis loop
+    let videoStream = null; // To store the camera stream for stopping it
+
+    // Function to update the visual state of the analysis button
+    function updateAnalysisButtonState() {
+      if (isAnalysisRunning) {
+        toggleAnalysisBtn.textContent = "⏸️ Arrêter l'analyse";
+        toggleAnalysisBtn.classList.add('active');
+      } else {
+        toggleAnalysisBtn.textContent = "▶️ Démarrer l'analyse";
+        toggleAnalysisBtn.classList.remove('active');
+      }
+    }
+
+    // Asynchronously starts the camera and sets up the video stream
+    async function startCamera() {
+      try {
+        status.textContent = "Accès à la caméra...";
+        // Request user media (video) with specific resolution and front-facing camera
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: 'user' // Use the front-facing camera
+          }
+        });
+        video.srcObject = stream; // Set the video source to the camera stream
+        videoStream = stream; // Store the stream to stop it later
+
+        // Return a promise that resolves when video metadata is loaded and video starts playing
+        return new Promise((resolve, reject) => {
+          video.onloadedmetadata = () => {
+            video.play().then(() => {
+              status.textContent = "Caméra activée ✅";
+              resolve(true);
+            }).catch(reject); // Reject if video fails to play
+          };
+          video.onerror = reject; // Reject if there's a video error
+        });
+      } catch (e) {
+        status.textContent = "❌ Erreur d'accès à la caméra: " + e.message;
+        console.error("Erreur caméra:", e);
+        return false; // Indicate camera failed to start
+      }
+    }
+
+    // Asynchronously loads the face-api.js models for detection, age/gender, and expressions
+    async function loadModels() {
+      try {
+        status.textContent = "Chargement des modèles IA...";
+
+        // Check if face-api is available, throw error if not
+        if (typeof faceapi === 'undefined') {
+          throw new Error('face-api.js n\'est pas chargé');
+        }
+
+        // Base URL for the face-api.js model weights
+        const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+        // Load models sequentially to ensure proper loading order
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        status.textContent = "Chargement des modèles... 33%";
+
+        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+        status.textContent = "Chargement des modèles... 66%";
+
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+        status.textContent = "Chargement des modèles... 80%";
+
+        await faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL);
+        status.textContent = "Modèles IA chargés ✅";
+
+        return true; // Indicate models loaded successfully
+      } catch (e) {
+        status.textContent = "❌ Erreur de chargement des modèles: " + e.message;
+        console.error("Erreur modèles:", e);
+        return false; // Indicate model loading failed
+      }
+    }
+
+    // Toggles the biometric analysis on and off
+    async function toggleAnalysis() {
+      if (!isAnalysisRunning) {
+        // Start analysis
+        if (!videoStream) { // If camera not started, try to start it
+          const cameraStarted = await startCamera();
+          if (!cameraStarted) {
+            return; // Cannot start analysis without camera
+          }
+        }
+        isAnalysisRunning = true;
+        updateAnalysisButtonState();
+        status.textContent = "Analyse biométrique active 📊";
+        detect(); // Start the detection loop
+      } else {
+        // Stop analysis
+        isAnalysisRunning = false;
+        updateAnalysisButtonState();
+        status.textContent = "Analyse biométrique arrêtée 🛑";
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+      }
+    }
+
+    // Captures the current canvas content as an image and downloads it
+    function captureImage() {
+      try {
+        // Create a temporary canvas for capturing
+        const captureCanvas = document.createElement('canvas');
+        const captureCtx = captureCanvas.getContext('2d');
+        captureCanvas.width = canvas.width;
+        captureCanvas.height = canvas.height;
+
+        // Copy the content from the main canvas to the temporary canvas
+        captureCtx.drawImage(canvas, 0, 0);
+
+        // Create a link element for downloading
+        const link = document.createElement('a');
+        // Generate a timestamp for the filename
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+        link.download = `biometric-analysis-${timestamp}.png`;
+        // Convert canvas content to a data URL (PNG format)
+        link.href = captureCanvas.toDataURL('image/png', 1.0);
+
+        // Temporarily add the link to the DOM, click it, and then remove it
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Visual flash animation on the canvas
+        canvas.style.transition = 'filter 0.15s ease';
+        canvas.style.filter = 'brightness(1.5) contrast(1.2)';
+        setTimeout(() => {
+          canvas.style.filter = 'none';
+        }, 150);
+
+        // Display success message
+        status.textContent = "📸 Image capturée avec succès !";
+        setTimeout(() => {
+          if (isAnalysisRunning) {
+            status.textContent = "Analyse biométrique active 📊";
+          } else {
+            status.textContent = "Analyse biométrique arrêtée 🛑";
+          }
+        }, 2000);
+      } catch (error) {
+        console.error("Erreur de capture:", error);
+        status.textContent = "❌ Erreur lors de la capture";
+        setTimeout(() => {
+          if (isAnalysisRunning) {
+            status.textContent = "Analyse biométrique active 📊";
+          } else {
+            status.textContent = "Analyse biométrique arrêtée 🛑";
+          }
+        }, 2000);
+      }
+    }
+
+    // Main detection loop
+    async function detect() {
+      if (!isAnalysisRunning || video.paused || video.ended) {
+        return; // Stop the loop if analysis is not running or video is paused/ended
+      }
+
+      // Validate video dimensions before proceeding
+      if (!video.videoWidth || !video.videoHeight) {
+        console.warn("Dimensions vidéo invalides");
+        requestAnimationFrame(detect); // Continue polling
+        return;
+      }
+
+      // Set canvas dimensions to match video dimensions if not already set
+      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        faceapi.matchDimensions(canvas, { width: video.videoWidth, height: video.videoHeight });
+      }
+
+      try {
+        // Clear the canvas for the new frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the video frame onto the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Detect faces, landmarks, age/gender, and expressions
+        const detections = await faceapi.detectAllFaces(
+          video,
+          new faceapi.TinyFaceDetectorOptions({
+            inputSize: 416,
+            scoreThreshold: 0.4
+          })
+        )
+        .withFaceLandmarks()
+        .withAgeAndGender()
+        .withFaceExpressions()
+        .catch(err => {
+          console.warn("Erreur détection:", err);
+          return []; // Return empty array on error to prevent crashing
+        });
+
+        if (detections.length > 0) {
+          // Resize detections to match the display size of the canvas
+          const resizedDetections = faceapi.resizeResults(detections, { width: canvas.width, height: canvas.height });
+
+          resizedDetections.forEach((detection) => {
+            const box = detection.detection.box;
+            const age = Math.round(detection.age);
+            const gender = detection.gender === 'male' ? 'Homme' : 'Femme';
+            const expressions = detection.expressions;
+
+            // Draw bounding box around the face
+            ctx.strokeStyle = '#00ff00'; // Green color for the box
+            ctx.lineWidth = 2;
+            ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+            // Find the dominant expression
+            const sortedExpressions = Object.keys(expressions).map(expression => ({
+              expression,
+              probability: expressions[expression]
+            })).sort((a, b) => b.probability - a.probability);
+
+            let dominantExpression = "neutre";
+            if (sortedExpressions.length > 0) {
+              // Translate common expressions to French
+              switch (sortedExpressions[0].expression) {
+                case 'neutral': dominantExpression = 'neutre'; break;
+                case 'happy': dominantExpression = 'heureux'; break;
+                case 'sad': dominantExpression = 'triste'; break;
+                case 'angry': dominantExpression = 'en colère'; break;
+                case 'fearful': dominantExpression = 'effrayé'; break;
+                case 'disgusted': dominantExpression = 'dégoûté'; break;
+                case 'surprised': dominantExpression = 'surpris'; break;
+                default: dominantExpression = sortedExpressions[0].expression;
+              }
+            }
+
+            // Display age, gender, and expression near the face
+            const text = `${gender}, ${age} ans, ${dominantExpression}`;
+            ctx.fillStyle = '#fff';
+            ctx.font = '20px Inter';
+            ctx.fillText(text, box.x, box.y - 10); // Position text above the bounding box
+          });
+        }
+      } catch (error) {
+        console.error("Erreur de détection:", error);
+        // If the model is disposed (e.g., tab switched), re-initialize
+        if (error.message && error.message.includes('disposed')) {
+          console.warn("Redémarrage de l'analyse...");
+          isAnalysisRunning = false;
+          setTimeout(() => init(), 1000); // Re-initialize after a short delay
+          return;
+        }
+      }
+
+      // Continue the loop for the next frame
+      requestAnimationFrame(detect);
+    }
+
+    // Initialization function
+    async function init() {
+      try {
+        updateAnalysisButtonState(); // Set initial button state
+
+        // Wait for face-api.js to be fully loaded (with retry mechanism)
+        let attempts = 0;
+        while (typeof faceapi === 'undefined' && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms
+          attempts++;
+        }
+
+        if (typeof faceapi === 'undefined') {
+          throw new Error('Impossible de charger face-api.js');
+        }
+
+        status.textContent = "face-api.js chargé ✅";
+
+        // Load models
+        const modelsLoaded = await loadModels();
+        if (!modelsLoaded) {
+          status.textContent = "❌ Impossible de charger l'application";
+        }
+      } catch (error) {
+        console.error("Erreur d'initialisation:", error);
+        status.textContent = "❌ Erreur d'initialisation: " + error.message;
+      }
+    }
+
+    // Global error handler for uncaught errors
+    window.addEventListener('error', (e) => {
+      console.error('Erreur globale:', e.error);
+      if (e.error && e.error.message && e.error.message.includes('face-api')) {
+        status.textContent = "❌ Erreur du système de détection faciale";
+      }
+    });
+
+    // Clean up camera tracks when the page is unloaded
+    window.addEventListener('beforeunload', () => {
+      if (videoStream) {
+        const tracks = videoStream.getTracks();
+        tracks.forEach(track => track.stop()); // Stop all camera tracks
+      }
+    });
+
+    // Start initialization when the DOM is fully loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init(); // If DOM is already loaded, initialize immediately
+    }
+  </script>
+</body>
+</html>
 
 <!DOCTYPE html>
 <html lang="fr">
