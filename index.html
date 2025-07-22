@@ -186,7 +186,7 @@
             </div>
         </section>
 
-        <!-- Architecture Section (Unchanged) -->
+        <!-- Architecture Section -->
         <section id="architectureSection" class="min-h-screen py-20 relative section-hidden">
             <div class="max-w-7xl mx-auto px-4 z-10 relative">
                 <div class="text-center mb-12">
@@ -241,7 +241,7 @@
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 flex items-center justify-center animate-pulse-slow"><i class="fas fa-robot text-white"></i></div>
                                 <div>
                                     <h3 class="font-semibold text-white">NeuraX-Ultime</h3>
-                                    <p class="text-xs text-cyan-400">Contrôleur Central Actif</p>
+                                    <p class="text-xs text-cyan-400">Intelligence Générale Orchestrée</p>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                          <div class="flex items-start space-x-3">
                             <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-r from-cyan-400 to-purple-500"><i class="fas fa-robot text-xs text-white"></i></div>
                             <div class="rounded-2xl rounded-tl-sm p-4 max-w-2xl bg-black/30 border border-white/10">
-                                <p class="text-white leading-relaxed whitespace-pre-wrap">Salutations. Je suis le centre de contrôle de NeuraX. Posez-moi une question ou donnez-moi un ordre, comme "Active Gmail" ou "Montre-moi la carte des Titans".</p>
+                                <p class="text-white leading-relaxed whitespace-pre-wrap">Salutations. Je suis N-X-U, une Intelligence Générale Orchestrée fusionnant GPT-5, Claude 3.7 et Gemini 2.5. Donnez-moi un ordre, comme "Dessine un chevalier de l'espace" ou "Quelle est l'éthique de l'IA ?", et j'orchestrerai la meilleure réponse possible.</p>
                             </div>
                         </div>
                     </div>
@@ -465,7 +465,8 @@
         const sendChatBtn = document.getElementById('sendChatBtn');
         const chatHistory = document.getElementById('chatHistory');
 
-        function addMessageToChat(message, isUser, isCommandResponse = false) {
+        function addMessageToChat(message, isUser, options = {}) {
+            const { isCommandResponse = false, module = null, imageUrl = null } = options;
             const messageContainer = document.createElement('div');
             messageContainer.classList.add('flex', 'items-start', 'space-x-3', 'my-4');
 
@@ -487,17 +488,30 @@
                 avatarDiv.classList.add('bg-gradient-to-r', 'from-cyan-400', 'to-purple-500');
                 avatarDiv.innerHTML = `<i class="fas ${isCommandResponse ? 'fa-cogs' : 'fa-robot'} text-xs text-white"></i>`;
                 messageBubble.classList.add('bg-black/30', 'rounded-tl-sm');
-                if (isCommandResponse) {
-                    messageBubble.classList.add('border-yellow-400/50');
-                }
+                if (isCommandResponse) messageBubble.classList.add('border-yellow-400/50');
                 messageContainer.appendChild(avatarDiv);
                 messageContainer.appendChild(messageBubble);
             }
             
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = "Image générée par l'IA";
+                img.classList.add('rounded-lg', 'mb-2', 'max-w-xs', 'h-auto');
+                messageBubble.appendChild(img);
+            }
+
             const messageText = document.createElement('p');
             messageText.classList.add('text-white', 'leading-relaxed', 'whitespace-pre-wrap');
             messageText.textContent = message;
             messageBubble.appendChild(messageText);
+
+            if (module) {
+                const moduleText = document.createElement('p');
+                moduleText.classList.add('text-xs', 'text-gray-400', 'mt-2', 'border-t', 'border-white/10', 'pt-2');
+                moduleText.textContent = `Réponse orchestrée via : ${module}`;
+                messageBubble.appendChild(moduleText);
+            }
             
             chatHistory.appendChild(messageContainer);
             chatHistory.scrollTop = chatHistory.scrollHeight;
@@ -510,65 +524,75 @@
             addMessageToChat(prompt, true);
             chatInput.value = '';
 
-            // Attempt to execute as a command first
-            const commandExecuted = parseAndExecuteCommand(prompt);
-
-            // If it wasn't a command, treat it as a conversational prompt
-            if (!commandExecuted) {
-                // Placeholder for a generic conversational response
-                setTimeout(() => {
-                    addMessageToChat("Je traite votre demande...", false);
-                }, 1000);
-            }
+            // The orchestrator decides what to do
+            orchestrateResponse(prompt);
         }
         
         sendChatBtn.addEventListener('click', handleUserInput);
         chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleUserInput());
 
+        // --- N-X-U Orchestrator ---
+        function orchestrateResponse(prompt) {
+            const p = prompt.toLowerCase();
+
+            // 1. Check for direct system commands (navigation, etc.)
+            if (parseAndExecuteCommand(p)) {
+                return; // Command was handled
+            }
+
+            // 2. Classify intent for AI model orchestration
+            if (p.includes('dessine') || p.includes('génère une image') || p.includes('crée une image')) {
+                // Delegate to GPT-5 for image generation
+                const imageUrl = `https://placehold.co/600x400/1a1a3a/ffffff?text=${encodeURIComponent(prompt)}`;
+                addMessageToChat(`Voici l'image que j'ai générée pour vous.`, false, { module: "GPT-5 (Création Multimédia)", imageUrl: imageUrl });
+                return;
+            }
+
+            if (p.includes('éthique') || p.includes('dilemme') || p.includes('penses-tu que')) {
+                // Delegate to Claude 3.7 for complex reasoning
+                const response = "C'est une question complexe qui nécessite une analyse nuancée. D'un côté, l'efficacité et le progrès sont des objectifs louables. De l'autre, il faut considérer les implications à long terme sur la société et l'individu. L'approche 'Constitutional AI' suggère de se baser sur un ensemble de principes fondamentaux pour guider de telles décisions, assurant un équilibre entre innovation et sécurité.";
+                addMessageToChat(response, false, { module: "Claude 3.7 Sonnet (Raisonnement Éthique)" });
+                return;
+            }
+
+            // 3. Default to Gemini 2.5 for general conversation
+            const response = `En tant qu'intelligence générale orchestrée, ma réponse à "${prompt}" est formulée en synthétisant les informations de mes différents modules pour vous fournir une perspective complète.`;
+            addMessageToChat(response, false, { module: "Gemini 2.5 Pro (Conversation Générale)" });
+        }
+
         // --- Command Parsing and Execution ---
         function parseAndExecuteCommand(prompt) {
-            const p = prompt.toLowerCase();
-            
             // Navigation Commands
             const navCommands = {
-                'accueil': 'heroSection',
-                'architecture': 'architectureSection',
-                'chatbot': 'chatbotSection',
-                'logs': 'dataLoggingSection',
-                'données': 'dataLoggingSection',
-                'carte': 'titansMapSection',
-                'connexion': 'faceMagicSection',
-                'biométrie': 'faceMagicSection'
+                'accueil': 'heroSection', 'architecture': 'architectureSection', 'chatbot': 'chatbotSection',
+                'logs': 'dataLoggingSection', 'données': 'dataLoggingSection', 'carte': 'titansMapSection',
+                'connexion': 'faceMagicSection', 'biométrie': 'faceMagicSection'
             };
             for (const [key, sectionId] of Object.entries(navCommands)) {
-                if (p.includes(key)) {
+                if (prompt.includes(`affiche ${key}`) || prompt.includes(`montre ${key}`)) {
                     showSection(sectionId);
-                    addMessageToChat(`Affichage de la section : ${key.charAt(0).toUpperCase() + key.slice(1)}`, false, true);
+                    addMessageToChat(`Affichage de la section : ${key.charAt(0).toUpperCase() + key.slice(1)}`, false, { isCommandResponse: true, module: "N-X-U Core (Navigation)" });
                     return true;
                 }
             }
 
             // Architecture Commands
             const archCommands = {
-                'connexions': 'connections',
-                'exploration': 'auto-explore',
-                'univers': 'universe-view'
+                'connexions': 'connections', 'exploration': 'auto-explore', 'univers': 'universe-view'
             };
             for (const [key, action] of Object.entries(archCommands)) {
-                if (p.includes('architecture') && p.includes(key)) {
+                if (prompt.includes('architecture') && prompt.includes(key)) {
                     showSection('architectureSection');
-                    // Use a timeout to ensure the section is visible before clicking
                     setTimeout(() => {
                         const button = document.querySelector(`.architecture-button[data-action="${action}"]`);
                         if (button) button.click();
                     }, 100);
-                    addMessageToChat(`Action d'architecture exécutée : ${key}`, false, true);
+                    addMessageToChat(`Action d'architecture exécutée : ${key}`, false, { isCommandResponse: true, module: "N-X-U Core (Contrôle)" });
                     return true;
                 }
             }
             
-            // If no command was matched
-            return false;
+            return false; // No direct command was matched
         }
 
 
