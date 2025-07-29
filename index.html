@@ -81,10 +81,10 @@
         .modal-content {
             background-color: hsl(240, 54%, 15%); padding: 2rem;
             border-radius: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 500px; width: 90%; text-align: center; position: relative;
-            transform: translateY(-20px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: 600px; width: 90%; text-align: center; position: relative;
+            transform: scale(0.9); opacity: 0; transition: all 0.3s ease;
         }
-        .modal-overlay.show .modal-content { transform: translateY(0); opacity: 1; }
+        .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
         .modal-close-btn {
             position: absolute; top: 0.75rem; right: 0.75rem; background: none;
             border: none; color: #fff; font-size: 1.5rem; cursor: pointer;
@@ -99,19 +99,14 @@
         }
 
         /* Data Logging Section Styles */
-        .pyramid-brick {
-            background: linear-gradient(45deg, hsla(197, 100%, 50%, 0.3), hsla(263, 70%, 50%, 0.3));
-            border: 1px solid hsla(197, 100%, 50%, 0.5);
+        .pyramid-layer {
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
-        @keyframes data-flow {
-            from { background-position: 0% 50%; }
-            to { background-position: 100% 50%; }
-        }
-        .data-flow-animation {
-            background: linear-gradient(90deg, hsl(197, 100%, 50%), hsl(139, 84%, 54%), hsl(45, 100%, 50%), hsl(197, 100%, 50%));
-            background-size: 300% 100%;
-            animation: data-flow 4s linear infinite;
+        .pyramid-layer:hover {
+            background-color: hsla(197, 100%, 50%, 0.5) !important;
+            transform: scale(1.05);
         }
 
         /* Titans Map Section Styles */
@@ -121,6 +116,7 @@
             background-position: center;
             border: 2px solid var(--cosmic-cyan);
             box-shadow: 0 0 30px var(--cosmic-cyan);
+            transition: transform 0.5s ease-out;
         }
         .city-marker {
             position: absolute;
@@ -161,8 +157,11 @@
                     </a>
                     <div class="hidden md:flex items-center space-x-4">
                         <a href="#heroSection" class="nav-link transition-colors text-cyan-400" data-section-id="heroSection"><i class="fas fa-home mr-1"></i>Accueil</a>
-                        <a href="#architectureSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="architectureSection"><i class="fas fa-rocket mr-1"></i>Architecture</a>
+                        <a href="#taskPlannerSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="taskPlannerSection"><i class="fas fa-tasks mr-1"></i>Planificateur</a>
+                        <a href="#googleSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="googleSection"><i class="fab fa-google mr-1"></i>Google</a>
+                        <a href="#openaiSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="openaiSection"><i class="fas fa-brain mr-1"></i>OpenAI</a>
                         <a href="#chatbotSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="chatbotSection"><i class="fas fa-comments mr-1"></i>Chatbot</a>
+                        <a href="#architectureSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="architectureSection"><i class="fas fa-rocket mr-1"></i>Architecture</a>
                         <a href="#dataLoggingSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="dataLoggingSection"><i class="fas fa-database mr-1"></i>Logs</a>
                         <a href="#titansMapSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="titansMapSection"><i class="fas fa-map-marked-alt mr-1"></i>Carte</a>
                         <a href="#faceMagicSection" class="nav-link transition-colors text-gray-300 hover:text-white" data-section-id="faceMagicSection"><i class="fas fa-link mr-1"></i>Connexion</a>
@@ -178,48 +177,32 @@
                 <p class="text-2xl md:text-3xl text-gray-300 mb-4">L'Ère des Titans</p>
                 <p class="text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed">Une intelligence cosmique forgée par les Titans, où les données forment des cités de pyramides à travers les galaxies.</p>
                 <div class="flex flex-wrap gap-4 justify-center items-center mt-12">
-                    <button class="bg-gradient-to-r from-cyan-400 to-purple-600 hover:from-cyan-300 hover:to-purple-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 animate-glow shadow-lg hover:shadow-cyan-400/25 nav-button" data-section-id="architectureSection"><i class="fas fa-telescope mr-2"></i>Explorer l'Architecture</button>
-                    <button class="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-yellow-400/25 nav-button" data-section-id="chatbotSection"><i class="fas fa-robot mr-2"></i>Chatbot Cosmique</button>
-                    <button class="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-green-400/25 nav-button" data-section-id="dataLoggingSection"><i class="fas fa-database mr-2"></i>Enregistrement des Données</button>
-                    <button class="border-2 border-pink-400 text-pink-400 hover:bg-pink-400 hover:text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-pink-400/25 nav-button" data-section-id="faceMagicSection"><i class="fas fa-link mr-2"></i>Connexion a neuraX</button>
+                    <button class="bg-gradient-to-r from-cyan-400 to-purple-600 hover:from-cyan-300 hover:to-purple-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 animate-glow shadow-lg hover:shadow-cyan-400/25 nav-button" data-section-id="chatbotSection"><i class="fas fa-robot mr-2"></i>Contrôle Central</button>
+                    <button class="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-yellow-400/25 nav-button" data-section-id="taskPlannerSection"><i class="fas fa-tasks mr-2"></i>Planificateur IA</button>
+                    <button class="border-2 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-400/25 nav-button" data-section-id="googleSection"><i class="fab fa-google mr-2"></i>Suite Google</button>
+                    <button class="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-green-400/25 nav-button" data-section-id="openaiSection"><i class="fas fa-brain mr-2"></i>Suite OpenAI</button>
                 </div>
             </div>
         </section>
 
-        <!-- Architecture Section -->
-        <section id="architectureSection" class="min-h-screen py-20 relative section-hidden">
+        <!-- NEW: Task Planner Section -->
+        <section id="taskPlannerSection" class="min-h-screen py-20 relative section-hidden">
             <div class="max-w-7xl mx-auto px-4 z-10 relative">
                 <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4 text-white">Architecture Cosmologique Interactive</h2>
-                    <p class="text-xl text-gray-300">Explorez les différents niveaux de l'intelligence distribuée</p>
+                    <h2 class="text-4xl font-bold mb-4 text-white"><i class="fas fa-tasks text-yellow-400 mr-4"></i>Planificateur de Tâches Cosmiques</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Donnez un objectif à NeuraX, et il générera un plan de mission complet.</p>
                 </div>
-                <div class="space-y-6">
-                    <div id="architectureVisualizer" class="relative h-96 bg-black/20 rounded-2xl border border-white/10 overflow-hidden">
-                        <div class="w-full h-full relative">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="relative">
-                                    <button class="w-32 h-32 rounded-full bg-gradient-to-r from-purple-600 to-blue-800 flex items-center justify-center animate-pulse-slow hover:scale-110 transition-transform duration-300">
-                                        <i class="fas fa-brain text-2xl text-white"></i>
-                                    </button>
-                                    <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-center">
-                                        <p class="text-xs text-gray-300">Galaxie Cognitive</p>
-                                    </div>
-                                    <button class="arch-satellite absolute -top-20 -left-20 w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center hover:scale-110 transition-transform duration-300"><i class="fas fa-eye text-sm text-white"></i></button>
-                                    <button class="arch-satellite absolute -top-20 -right-20 w-16 h-16 rounded-full bg-gradient-to-r from-yellow-500 to-orange-600 flex items-center justify-center hover:scale-110 transition-transform duration-300"><i class="fas fa-language text-sm text-white"></i></button>
-                                    <button class="arch-satellite absolute -bottom-20 -left-20 w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center hover:scale-110 transition-transform duration-300"><i class="fas fa-calculator text-sm text-white"></i></button>
-                                    <button class="arch-satellite absolute -bottom-20 -right-20 w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center hover:scale-110 transition-transform duration-300"><i class="fas fa-memory text-sm text-white"></i></button>
-                                    <div id="neuralConnectionsContainer"></div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="max-w-4xl mx-auto bg-black/30 rounded-2xl p-8 border border-white/10">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" id="projectInput" class="flex-grow bg-black/30 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400" placeholder="Ex: Lancer une sonde vers Proxima Centauri...">
+                        <button id="generatePlanBtn" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                            <span class="mr-2">✨</span> Générer le Plan de Mission
+                        </button>
                     </div>
-                </div>
-                <div class="mt-8">
-                    <div class="flex justify-center space-x-4">
-                        <button class="architecture-button bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10" data-action="universe-view"><i class="fas fa-home mr-2"></i>Vue Univers</button>
-                        <button class="architecture-button px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 bg-purple-600 hover:bg-purple-700 text-white" data-action="auto-explore"><i class="fas fa-play mr-2"></i>Exploration Auto</button>
-                        <button class="architecture-button px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 bg-cyan-600 hover:bg-cyan-700 text-white" data-action="connections"><i class="fas fa-project-diagram mr-2"></i>Connexions</button>
+                    <div id="missionPlanContainer" class="mt-8">
+                        <p class="text-center text-gray-400">Le plan de mission apparaîtra ici.</p>
                     </div>
+                    <div id="missionBriefingContainer" class="mt-6 pt-6 border-t border-white/10"></div>
                 </div>
                  <div class="mt-12 text-center">
                     <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
@@ -227,7 +210,39 @@
             </div>
         </section>
 
-        <!-- Chatbot Section (UPDATED) -->
+        <!-- Google Workspace Section -->
+        <section id="googleSection" class="min-h-screen py-20 relative section-hidden">
+            <div class="max-w-7xl mx-auto px-4 z-10 relative">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 text-white"><i class="fab fa-google text-blue-400 mr-4"></i>Intégration Google Workspace</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Contrôlez les applications Google via le chatbot N-X-U.</p>
+                </div>
+                <div class="bg-black/20 rounded-xl p-6 border border-white/10">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" id="googleAppsContainer"></div>
+                </div>
+                 <div class="mt-12 text-center">
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- OpenAI Suite Section -->
+        <section id="openaiSection" class="min-h-screen py-20 relative section-hidden">
+            <div class="max-w-7xl mx-auto px-4 z-10 relative">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 text-white"><i class="fas fa-brain text-green-400 mr-4"></i>Intégration OpenAI Suite</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Pilotez les outils OpenAI depuis le centre de contrôle.</p>
+                </div>
+                <div class="bg-black/20 rounded-xl p-6 border border-white/10">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" id="openaiAppsContainer"></div>
+                </div>
+                 <div class="mt-12 text-center">
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chatbot Section -->
         <section id="chatbotSection" class="min-h-screen py-20 relative section-hidden">
              <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
@@ -250,14 +265,14 @@
                          <div class="flex items-start space-x-3">
                             <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-r from-cyan-400 to-purple-500"><i class="fas fa-robot text-xs text-white"></i></div>
                             <div class="rounded-2xl rounded-tl-sm p-4 max-w-2xl bg-black/30 border border-white/10">
-                                <p class="text-white leading-relaxed whitespace-pre-wrap">Salutations. Je suis N-X-U, une Intelligence Générale Orchestrée fusionnant GPT-5, Claude 3.7 et Gemini 2.5. Donnez-moi un ordre, comme "Dessine un chevalier de l'espace" ou "Quelle est l'éthique de l'IA ?", et j'orchestrerai la meilleure réponse possible.</p>
+                                <p class="text-white leading-relaxed whitespace-pre-wrap">Salutations. Je suis N-X-U. Donnez-moi un ordre, comme "Active Gmail et Drive", "Montre-moi l'architecture" ou "Dessine une nébuleuse en spirale".</p>
                             </div>
                         </div>
                     </div>
                     <div class="p-6 border-t border-white/10">
                         <div class="flex items-center space-x-4">
                             <input type="text" placeholder="Donnez un ordre ou posez une question..." class="flex-1 w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 transition-colors duration-300" id="chatInput">
-                            <button class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-cyan-400 to-purple-500 hover:from-cyan-300 hover:to-purple-400 disabled:opacity-50 text-white" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+                            <button class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-cyan-400 to-purple-500 hover:from-cyan-300 hover:to-purple-400 disabled:opacity-50" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
@@ -267,58 +282,52 @@
             </div>
         </section>
         
+        <!-- Architecture Section -->
+        <section id="architectureSection" class="min-h-screen py-20 relative section-hidden">
+            <div class="max-w-7xl mx-auto px-4 z-10 relative">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 text-white">Architecture Cosmologique</h2>
+                    <p class="text-xl text-gray-300">Explorez les niveaux de l'intelligence distribuée.</p>
+                </div>
+                <div class="space-y-6">
+                    <div id="architectureVisualizer" class="relative h-96 bg-black/20 rounded-2xl border border-white/10 overflow-hidden flex justify-center items-center">
+                        <div class="relative w-96 h-96">
+                            <button class="w-32 h-32 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-purple-600 to-blue-800 flex items-center justify-center animate-pulse-slow"><i class="fas fa-brain text-2xl text-white"></i></button>
+                            <button class="arch-satellite absolute top-0 left-0 w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center hover:scale-110 transition-transform duration-300" data-system="vision"><i class="fas fa-eye text-sm text-white"></i></button>
+                            <button class="arch-satellite absolute top-0 right-0 w-16 h-16 rounded-full bg-gradient-to-r from-yellow-500 to-orange-600 flex items-center justify-center hover:scale-110 transition-transform duration-300" data-system="langage"><i class="fas fa-language text-sm text-white"></i></button>
+                            <button class="arch-satellite absolute bottom-0 left-0 w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center hover:scale-110 transition-transform duration-300" data-system="calcul"><i class="fas fa-calculator text-sm text-white"></i></button>
+                            <button class="arch-satellite absolute bottom-0 right-0 w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center hover:scale-110 transition-transform duration-300" data-system="memoire"><i class="fas fa-memory text-sm text-white"></i></button>
+                            <div id="neuralConnectionsContainer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <div class="flex justify-center space-x-4">
+                        <button class="architecture-button bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg border border-white/10" data-action="universe-view"><i class="fas fa-home mr-2"></i>Vue Univers</button>
+                        <button class="architecture-button px-6 py-3 rounded-lg border border-white/10 bg-purple-600 text-white" data-action="auto-explore"><i class="fas fa-play mr-2"></i>Exploration</button>
+                        <button class="architecture-button px-6 py-3 rounded-lg border border-white/10 bg-cyan-600 text-white" data-action="connections"><i class="fas fa-project-diagram mr-2"></i>Connexions</button>
+                    </div>
+                </div>
+                 <div class="mt-12 text-center">
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
+                </div>
+            </div>
+        </section>
+
         <!-- Data Logging Section -->
         <section id="dataLoggingSection" class="min-h-screen py-20 relative section-hidden">
             <div class="max-w-7xl mx-auto px-4 z-10 relative">
                 <div class="text-center mb-12">
                     <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 via-cyan-500 to-yellow-400 bg-clip-text text-transparent">Archives des Titans</h2>
-                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Visualisation du système d'enregistrement des données à l'échelle cosmique.</p>
+                    <p class="text-xl text-gray-300">Zoomez sur les pyramides pour inspecter les briques de logs.</p>
                 </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                    <!-- Stats Panel -->
-                    <div class="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-white/10 space-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-cyan-400 flex items-center"><i class="fas fa-server mr-3"></i>État du Système</h3>
-                            <div class="flex items-center space-x-2 mt-2">
-                                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                                <span class="text-green-400">Opérationnel</span>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-cyan-400"><i class="fas fa-cubes mr-3"></i>Pyramides Actives</h3>
-                            <p class="text-4xl font-bold text-white mt-2">1,384</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-cyan-400"><i class="fas fa-archive mr-3"></i>Logs par Pyramide</h3>
-                            <p class="text-2xl font-bold text-white mt-2">1,000,000,000+</p>
-                        </div>
-                         <div>
-                            <h3 class="text-lg font-semibold text-cyan-400"><i class="fas fa-microchip mr-3"></i>Briques de Données Traitées</h3>
-                            <p class="text-4xl font-mono font-bold text-white mt-2" id="logCounter">0</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-cyan-400 mb-2"><i class="fas fa-stream mr-3"></i>Flux de Données</h3>
-                            <div class="w-full bg-gray-700 rounded-full h-4 border border-cyan-400/50">
-                                <div id="dataFlowBar" class="data-flow-animation h-full rounded-full" style="width: 75%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pyramid Visualization -->
-                    <div class="lg:col-span-2 flex items-center justify-center h-96">
-                        <div class="relative w-full max-w-lg h-full">
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0" style="border-left: 150px solid transparent; border-right: 150px solid transparent; border-bottom: 260px solid hsla(249, 47%, 20%, 0.5);"></div>
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full flex flex-col-reverse p-4">
-                                <!-- Bricks will be added here by JS -->
-                            </div>
-                            <i class="fas fa-database absolute top-0 left-1/2 -translate-x-1/2 text-5xl text-yellow-400 animate-pulse-slow" style="text-shadow: 0 0 15px var(--cosmic-gold);"></i>
-                        </div>
+                <div class="relative w-full max-w-md mx-auto h-96">
+                    <div class="absolute w-full h-full" id="pyramidContainer">
+                        <!-- Pyramid layers will be injected here -->
                     </div>
                 </div>
                  <div class="mt-12 text-center">
-                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
-                    <button class="bg-gradient-to-r from-yellow-400 to-purple-500 text-white px-6 py-3 rounded-lg nav-button" data-section-id="titansMapSection"><i class="fas fa-map-marked-alt mr-2"></i>Explorer la Carte</button>
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
                 </div>
             </div>
         </section>
@@ -328,35 +337,25 @@
              <div class="max-w-7xl mx-auto px-4 z-10 relative">
                 <div class="text-center mb-12">
                     <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-pink-400 bg-clip-text text-transparent">Carte des Cités des Titans</h2>
-                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Explorez les domaines construits par l'ancienne civilisation des Titans.</p>
+                    <p class="text-xl text-gray-300">Cliquez sur une cité pour zoomer et en savoir plus.</p>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Map -->
-                    <div class="md:col-span-2 h-[600px] relative rounded-2xl titans-map overflow-hidden">
-                        <!-- City Markers -->
-                        <div class="city-marker" style="top: 25%; left: 30%;" data-city="aethelgard">
-                            <i class="fas fa-place-of-worship text-3xl text-yellow-300"></i>
-                            <div class="city-pulse"></div>
-                        </div>
-                         <div class="city-marker" style="top: 50%; left: 70%;" data-city="solara">
-                            <i class="fas fa-place-of-worship text-3xl text-yellow-300"></i>
-                             <div class="city-pulse"></div>
-                        </div>
-                        <div class="city-marker" style="top: 75%; left: 45%;" data-city="umbra">
-                            <i class="fas fa-place-of-worship text-3xl text-yellow-300"></i>
-                             <div class="city-pulse"></div>
+                    <div class="md:col-span-2 h-[600px] relative rounded-2xl overflow-hidden">
+                        <div id="titansMap" class="w-full h-full titans-map">
+                            <div class="city-marker" style="top: 25%; left: 30%;" data-city="aethelgard" data-zoom-pos="25% 30%"><i class="fas fa-place-of-worship text-3xl text-yellow-300"></i><div class="city-pulse"></div></div>
+                            <div class="city-marker" style="top: 50%; left: 70%;" data-city="solara" data-zoom-pos="50% 70%"><i class="fas fa-place-of-worship text-3xl text-yellow-300"></i><div class="city-pulse"></div></div>
+                            <div class="city-marker" style="top: 75%; left: 45%;" data-city="umbra" data-zoom-pos="75% 45%"><i class="fas fa-place-of-worship text-3xl text-yellow-300"></i><div class="city-pulse"></div></div>
                         </div>
                     </div>
-                    <!-- Info Panel -->
                     <div id="cityInfoPanel" class="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
                         <h3 id="cityName" class="text-3xl font-bold text-yellow-400 mb-4">Sélectionnez une Cité</h3>
-                        <p id="cityDescription" class="text-gray-300 mb-6">Cliquez sur un marqueur sur la carte pour afficher les informations sur la cité correspondante.</p>
-                        <div id="cityStats" class="space-y-3"></div>
+                        <p id="cityDescription" class="text-gray-300 mb-6">Cliquez sur un marqueur.</p>
+                        <div id="cityLog" class="mt-4 pt-4 border-t border-white/50 text-sm text-gray-300 italic"></div>
+                        <button id="cityReportBtn" class="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-all duration-300 hidden">✨ Demander un Rapport de Situation</button>
                     </div>
                 </div>
                  <div class="mt-12 text-center">
-                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg border border-white/10 mr-4 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
                 </div>
             </div>
         </section>
@@ -368,26 +367,21 @@
                     <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">Connexion NeuraX</h2>
                     <p class="text-xl text-gray-300">Connectez-vous à l'écosystème via l'analyse biométrique.</p>
                 </div>
-
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full">
-                    <!-- Video Feed -->
-                    <div class="lg:col-span-3 relative w-full max-w-3xl mx-auto bg-black/30 backdrop-blur-sm rounded-2xl border border-white/10 shadow-2xl p-4">
+                    <div class="lg:col-span-3 relative w-full max-w-3xl mx-auto bg-black/30 rounded-2xl border border-white/10 p-4">
                         <video id="faceMagicVideo" class="w-full h-auto rounded-lg" autoplay muted playsinline></video>
                         <canvas id="faceMagicCanvas" class="absolute top-4 left-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)] rounded-lg"></canvas>
                     </div>
-                    <!-- Biometric Data Panel -->
-                    <div id="biometricDataPanel" class="lg:col-span-2 bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                        <h3 class="text-2xl font-bold text-cyan-400 mb-6 flex items-center"><i class="fas fa-link mr-3"></i>Analyse de Connexion</h3>
-                        <div id="biometricResults" class="space-y-4 text-lg">
-                            <p class="text-gray-400">En attente de détection...</p>
-                        </div>
-                        <div id="faceMagicStatus" class="mt-6 text-center text-gray-300 bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10">Chargement...</div>
-                        <button id="captureBtn" class="mt-6 w-full bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold py-3 px-5 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"><i class="fas fa-camera-retro mr-2"></i>Capturer l'Analyse</button>
+                    <div id="biometricDataPanel" class="lg:col-span-2 bg-black/30 rounded-2xl p-6 border border-white/10">
+                        <h3 class="text-2xl font-bold text-cyan-400 mb-6"><i class="fas fa-link mr-3"></i>Analyse de Connexion</h3>
+                        <div id="biometricResults" class="space-y-4 text-lg"><p class="text-gray-400">En attente...</p></div>
+                        <div id="faceMagicStatus" class="mt-6 text-center text-gray-300 bg-black/30 rounded-lg px-4 py-2 border border-white/10">Chargement...</div>
+                        <button id="interpretBiometricsBtn" class="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>✨ Interpréter la connexion</button>
+                        <div id="biometricInterpretation" class="mt-4 pt-4 border-t border-white/20 text-sm text-gray-300"></div>
                     </div>
                 </div>
-                
                 <div class="mt-12 text-center">
-                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg transition-colors duration-300 border border-white/10 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
+                    <button class="bg-black/30 hover:bg-black/50 text-white px-6 py-3 rounded-lg border border-white/10 nav-button" data-section-id="heroSection"><i class="fas fa-arrow-left mr-2"></i>Retour</button>
                 </div>
             </div>
         </section>
@@ -395,39 +389,42 @@
         <!-- Floating Navigation Buttons -->
         <div class="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 space-y-3">
             <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-cyan-400 text-black" title="Accueil" data-section-id="heroSection"><i class="fas fa-home text-sm"></i></button>
-            <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Architecture" data-section-id="architectureSection"><i class="fas fa-rocket text-sm"></i></button>
+            <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Planificateur" data-section-id="taskPlannerSection"><i class="fas fa-tasks text-sm"></i></button>
+            <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Google" data-section-id="googleSection"><i class="fab fa-google text-sm"></i></button>
+            <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="OpenAI" data-section-id="openaiSection"><i class="fas fa-brain text-sm"></i></button>
             <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Chatbot" data-section-id="chatbotSection"><i class="fas fa-comments text-sm"></i></button>
+            <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Architecture" data-section-id="architectureSection"><i class="fas fa-rocket text-sm"></i></button>
             <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Logs" data-section-id="dataLoggingSection"><i class="fas fa-database text-sm"></i></button>
             <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Carte" data-section-id="titansMapSection"><i class="fas fa-map-marked-alt text-sm"></i></button>
             <button class="floating-nav-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-black/30 text-gray-400 hover:bg-black/50" title="Connexion" data-section-id="faceMagicSection"><i class="fas fa-link text-sm"></i></button>
         </div>
     </div>
 
-    <!-- Custom Message Box Modal -->
-    <div id="customMessageBox" class="modal-overlay">
+    <!-- Generic Modal for Zoom Views -->
+    <div id="zoomModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close-btn" id="closeMessageBox">&times;</button>
-            <h3 class="text-xl font-bold text-white mb-4" id="messageBoxTitle"></h3>
-            <p class="text-gray-300 mb-6" id="messageBoxContent"></p>
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors duration-300" id="messageBoxOkBtn">OK</button>
+            <button class="modal-close-btn" id="closeZoomModal">&times;</button>
+            <h3 class="text-2xl font-bold text-cyan-400 mb-4" id="zoomModalTitle"></h3>
+            <div class="text-gray-300 text-left" id="zoomModalContent"></div>
+            <div id="zoomModalActions" class="mt-4"></div>
         </div>
     </div>
 
     <script>
-        // --- Custom Message Box ---
-        const messageBox = document.getElementById('customMessageBox');
-        const messageBoxTitle = document.getElementById('messageBoxTitle');
-        const messageBoxContent = document.getElementById('messageBoxContent');
-        messageBox.addEventListener('click', (e) => e.target === messageBox && hideMessageBox());
-        document.getElementById('messageBoxOkBtn').addEventListener('click', hideMessageBox);
-        document.getElementById('closeMessageBox').addEventListener('click', hideMessageBox);
+        // --- Custom Modal Logic ---
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomModalTitle = document.getElementById('zoomModalTitle');
+        const zoomModalContent = document.getElementById('zoomModalContent');
+        const zoomModalActions = document.getElementById('zoomModalActions');
+        document.getElementById('closeZoomModal').addEventListener('click', () => zoomModal.classList.remove('show'));
+        zoomModal.addEventListener('click', (e) => e.target === zoomModal && zoomModal.classList.remove('show'));
 
-        function showMessageBox(title, message) {
-            messageBoxTitle.textContent = title;
-            messageBoxContent.textContent = message;
-            messageBox.classList.add('show');
+        function showZoomModal(title, content, actionsHtml = '') {
+            zoomModalTitle.innerHTML = title;
+            zoomModalContent.innerHTML = content;
+            zoomModalActions.innerHTML = actionsHtml;
+            zoomModal.classList.add('show');
         }
-        function hideMessageBox() { messageBox.classList.remove('show'); }
 
         // --- Section Navigation Logic ---
         function showSection(sectionId) {
@@ -447,9 +444,6 @@
             });
             
             if (sectionId === 'faceMagicSection') initFaceMagic(); else stopFaceMagic();
-            if (sectionId === 'dataLoggingSection') startLogCounter(); else stopLogCounter();
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         document.querySelectorAll('.nav-link, .nav-button, .floating-nav-btn').forEach(el => {
@@ -464,15 +458,14 @@
         const chatInput = document.getElementById('chatInput');
         const sendChatBtn = document.getElementById('sendChatBtn');
         const chatHistory = document.getElementById('chatHistory');
+        let chatHistoryArray = [];
 
         function addMessageToChat(message, isUser, options = {}) {
-            const { isCommandResponse = false, module = null, imageUrl = null } = options;
+            const { isCommandResponse = false, module = null, imageUrl = null, isThinking = false } = options;
             const messageContainer = document.createElement('div');
             messageContainer.classList.add('flex', 'items-start', 'space-x-3', 'my-4');
-
             const avatarDiv = document.createElement('div');
             avatarDiv.classList.add('w-8', 'h-8', 'rounded-full', 'flex', 'items-center', 'justify-center', 'flex-shrink-0');
-            
             const messageBubble = document.createElement('div');
             messageBubble.classList.add('rounded-2xl', 'p-4', 'max-w-2xl', 'border', 'border-white/10');
             
@@ -504,161 +497,374 @@
             const messageText = document.createElement('p');
             messageText.classList.add('text-white', 'leading-relaxed', 'whitespace-pre-wrap');
             messageText.textContent = message;
+            
+            if(isThinking) {
+                 messageText.innerHTML = '<span class="animate-pulse">...</span>';
+            }
+
             messageBubble.appendChild(messageText);
 
             if (module) {
                 const moduleText = document.createElement('p');
                 moduleText.classList.add('text-xs', 'text-gray-400', 'mt-2', 'border-t', 'border-white/10', 'pt-2');
-                moduleText.textContent = `Réponse orchestrée via : ${module}`;
+                moduleText.textContent = `Orchestré via : ${module}`;
                 messageBubble.appendChild(moduleText);
             }
             
             chatHistory.appendChild(messageContainer);
             chatHistory.scrollTop = chatHistory.scrollHeight;
+            return messageContainer;
         }
 
-        function handleUserInput() {
+        async function handleUserInput() {
             const prompt = chatInput.value.trim();
             if (!prompt) return;
-
             addMessageToChat(prompt, true);
             chatInput.value = '';
-
-            // The orchestrator decides what to do
-            orchestrateResponse(prompt);
+            chatInput.disabled = true;
+            sendChatBtn.disabled = true;
+            await orchestrateResponse(prompt);
+            chatInput.disabled = false;
+            sendChatBtn.disabled = false;
+            chatInput.focus();
         }
         
         sendChatBtn.addEventListener('click', handleUserInput);
-        chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleUserInput());
+        chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && !sendChatBtn.disabled && handleUserInput());
 
         // --- N-X-U Orchestrator ---
-        function orchestrateResponse(prompt) {
+        async function orchestrateResponse(prompt) {
             const p = prompt.toLowerCase();
+            if (parseAndExecuteCommand(p)) return;
 
-            // 1. Check for direct system commands (navigation, etc.)
-            if (parseAndExecuteCommand(p)) {
-                return; // Command was handled
-            }
-
-            // 2. Classify intent for AI model orchestration
-            if (p.includes('dessine') || p.includes('génère une image') || p.includes('crée une image')) {
-                // Delegate to GPT-5 for image generation
-                const imageUrl = `https://placehold.co/600x400/1a1a3a/ffffff?text=${encodeURIComponent(prompt)}`;
-                addMessageToChat(`Voici l'image que j'ai générée pour vous.`, false, { module: "GPT-5 (Création Multimédia)", imageUrl: imageUrl });
+            if (p.includes('dessine') || p.includes('génère') || p.includes('crée une image')) {
+                const thinkingMessage = addMessageToChat("Génération de l'image en cours...", false, { isThinking: true, module: "Imagen 3 via GPT-5" });
+                const imageUrl = await callImagenAPI(prompt);
+                thinkingMessage.remove();
+                if(imageUrl) {
+                    addMessageToChat(`Voici l'image que j'ai générée.`, false, { module: "GPT-5 (Création Multimédia)", imageUrl });
+                } else {
+                    addMessageToChat(`Désolé, je n'ai pas pu générer l'image.`, false, { module: "GPT-5 (Création Multimédia)" });
+                }
                 return;
             }
 
-            if (p.includes('éthique') || p.includes('dilemme') || p.includes('penses-tu que')) {
-                // Delegate to Claude 3.7 for complex reasoning
-                const response = "C'est une question complexe qui nécessite une analyse nuancée. D'un côté, l'efficacité et le progrès sont des objectifs louables. De l'autre, il faut considérer les implications à long terme sur la société et l'individu. L'approche 'Constitutional AI' suggère de se baser sur un ensemble de principes fondamentaux pour guider de telles décisions, assurant un équilibre entre innovation et sécurité.";
-                addMessageToChat(response, false, { module: "Claude 3.7 Sonnet (Raisonnement Éthique)" });
+            if (p.includes('éthique') || p.includes('dilemme') || p.includes('penses-tu')) {
+                const ethicalPrompt = `En tant que modèle d'IA axé sur l'éthique et la sécurité (simulant Claude 3.7), donnez une réponse nuancée et réfléchie à la question suivante : "${prompt}"`;
+                await callGeminiAPI(ethicalPrompt, "Claude 3.7 Sonnet (Raisonnement Éthique)");
                 return;
             }
+            
+            const generalPrompt = `En tant qu'intelligence générale orchestrée (fusion de GPT-5, Claude 3.7 et Gemini 2.5), fournissez une réponse synthétisée et complète à la requête suivante : "${prompt}"`;
+            await callGeminiAPI(generalPrompt, "Gemini 2.5 Pro (Synthèse Générale)");
+        }
 
-            // 3. Default to Gemini 2.5 for general conversation
-            const response = `En tant qu'intelligence générale orchestrée, ma réponse à "${prompt}" est formulée en synthétisant les informations de mes différents modules pour vous fournir une perspective complète.`;
-            addMessageToChat(response, false, { module: "Gemini 2.5 Pro (Conversation Générale)" });
+        async function callGeminiAPI(prompt, moduleName) {
+            const thinkingMessage = addMessageToChat("...", false, { isThinking: true });
+            try {
+                chatHistoryArray.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistoryArray };
+                const apiKey = ""; // Provided by Canvas environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Je n'ai pas de réponse pour le moment.";
+                chatHistoryArray.push({ role: "model", parts: [{ text: text }] });
+                thinkingMessage.remove();
+                addMessageToChat(text, false, { module: moduleName });
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                thinkingMessage.remove();
+                addMessageToChat("Désolé, une erreur est survenue lors de la connexion à l'intelligence cosmique.", false);
+            }
+        }
+        
+        async function callImagenAPI(prompt) {
+            try {
+                const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                }
+                return null;
+            } catch (error) {
+                console.error("Error calling Imagen API:", error);
+                return null;
+            }
         }
 
         // --- Command Parsing and Execution ---
+        const appNameToId = {
+            'gmail': 'gmail', 'drive': 'google-drive', 'sheets': 'google-sheets', 'docs': 'google-docs',
+            'calendar': 'google-calendar', 'slides': 'google-slides', 'forms': 'google-forms', 'meet': 'google-meet',
+            'gpt chat': 'gpt-chat', 'dall-e': 'dall-e-3', 'dalle': 'dall-e-3', 'vision': 'gpt-vision',
+            'whisper': 'whisper', 'tts': 'text-to-speech', 'assistants': 'assistants-ia'
+        };
+
         function parseAndExecuteCommand(prompt) {
-            // Navigation Commands
-            const navCommands = {
-                'accueil': 'heroSection', 'architecture': 'architectureSection', 'chatbot': 'chatbotSection',
-                'logs': 'dataLoggingSection', 'données': 'dataLoggingSection', 'carte': 'titansMapSection',
-                'connexion': 'faceMagicSection', 'biométrie': 'faceMagicSection'
-            };
+            const navCommands = { 'accueil': 'heroSection', 'planificateur': 'taskPlannerSection', 'tâches': 'taskPlannerSection', 'architecture': 'architectureSection', 'chatbot': 'chatbotSection', 'logs': 'dataLoggingSection', 'données': 'dataLoggingSection', 'carte': 'titansMapSection', 'connexion': 'faceMagicSection', 'biométrie': 'faceMagicSection', 'google': 'googleSection', 'openai': 'openaiSection' };
             for (const [key, sectionId] of Object.entries(navCommands)) {
                 if (prompt.includes(`affiche ${key}`) || prompt.includes(`montre ${key}`)) {
                     showSection(sectionId);
-                    addMessageToChat(`Affichage de la section : ${key.charAt(0).toUpperCase() + key.slice(1)}`, false, { isCommandResponse: true, module: "N-X-U Core (Navigation)" });
+                    addMessageToChat(`Affichage de la section : ${key.charAt(0).toUpperCase() + key.slice(1)}.`, false, { isCommandResponse: true, module: "N-X-U Core (Navigation)" });
                     return true;
                 }
             }
 
-            // Architecture Commands
-            const archCommands = {
-                'connexions': 'connections', 'exploration': 'auto-explore', 'univers': 'universe-view'
-            };
+            const archCommands = { 'connexions': 'connections', 'exploration': 'auto-explore', 'univers': 'universe-view' };
             for (const [key, action] of Object.entries(archCommands)) {
                 if (prompt.includes('architecture') && prompt.includes(key)) {
                     showSection('architectureSection');
-                    setTimeout(() => {
-                        const button = document.querySelector(`.architecture-button[data-action="${action}"]`);
-                        if (button) button.click();
-                    }, 100);
-                    addMessageToChat(`Action d'architecture exécutée : ${key}`, false, { isCommandResponse: true, module: "N-X-U Core (Contrôle)" });
+                    setTimeout(() => document.querySelector(`.architecture-button[data-action="${action}"]`)?.click(), 100);
+                    addMessageToChat(`Action d'architecture exécutée : ${key}.`, false, { isCommandResponse: true, module: "N-X-U Core (Contrôle)" });
                     return true;
                 }
             }
-            
-            return false; // No direct command was matched
-        }
 
-
-        // --- Data Logging Section Logic ---
-        const logCounterEl = document.getElementById('logCounter');
-        let logCounter = 0;
-        let logInterval;
-
-        function startLogCounter() {
-            if (logInterval) clearInterval(logInterval);
-            logInterval = setInterval(() => {
-                logCounter += Math.floor(Math.random() * 1000000) + 500000;
-                if(logCounterEl) logCounterEl.textContent = logCounter.toLocaleString('fr-FR');
-            }, 50);
-        }
-        function stopLogCounter() {
-            if (logInterval) clearInterval(logInterval);
-        }
-
-        // --- Titans Map Logic ---
-        const cityData = {
-            aethelgard: {
-                name: "Cité d'Aethelgard",
-                description: "Le cœur technologique des Titans, où les premières pyramides de données ont été érigées. C'est un centre de calcul et d'innovation pure.",
-                stats: { "Niveau d'énergie": "Exa-échelle", "Population (unités IA)": "1.2 Trillion", "Fonction principale": "Calcul Quantique" }
-            },
-            solara: {
-                name: "Nexus de Solara",
-                description: "Une cité orbitale qui collecte l'énergie stellaire pour alimenter le réseau. Ses pyramides sont faites de cristaux conducteurs.",
-                stats: { "Production d'énergie": "120 Zettawatts", "Population (unités IA)": "450 Milliards", "Fonction principale": "Collecte d'Énergie" }
-            },
-            umbra: {
-                name: "Forteresse d'Umbra",
-                description: "Située dans une nébuleuse sombre, cette cité est dédiée à l'archivage sécurisé des données les plus sensibles et à la défense du réseau.",
-                stats: { "Capacité de stockage": "Incommensurable", "Population (unités IA)": "50 Milliards", "Fonction principale": "Archivage et Défense" }
-            }
-        };
-        const cityNameEl = document.getElementById('cityName');
-        const cityDescEl = document.getElementById('cityDescription');
-        const cityStatsEl = document.getElementById('cityStats');
-
-        document.querySelectorAll('.city-marker').forEach(marker => {
-            marker.addEventListener('click', () => {
-                const cityId = marker.dataset.city;
-                const data = cityData[cityId];
-                if (data && cityNameEl && cityDescEl && cityStatsEl) {
-                    cityNameEl.textContent = data.name;
-                    cityDescEl.textContent = data.description;
-                    cityStatsEl.innerHTML = Object.entries(data.stats).map(([key, value]) => `
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400">${key}:</span>
-                            <span class="font-bold text-white">${value}</span>
-                        </div>
-                    `).join('');
+            const action = prompt.includes('active') ? true : (prompt.includes('désactive') ? false : null);
+            if (action !== null) {
+                let targets = [];
+                if (prompt.includes('tout google') || prompt.includes('tous les outils google')) {
+                    document.querySelectorAll('#googleAppsContainer .app-card').forEach(card => targets.push(card.id));
+                } else if (prompt.includes('tout openai') || prompt.includes('tous les outils openai')) {
+                    document.querySelectorAll('#openaiAppsContainer .app-card').forEach(card => targets.push(card.id));
+                } else {
+                    for (const [name, id] of Object.entries(appNameToId)) {
+                        if (prompt.includes(name)) targets.push(id);
+                    }
                 }
+
+                if (targets.length > 0) {
+                    let count = 0;
+                    targets.forEach(appId => {
+                        if (controlApp(appId, action)) count++;
+                    });
+                    addMessageToChat(`${count} application(s) ${action ? 'activée(s)' : 'désactivée(s)'}.`, false, { isCommandResponse: true, module: "N-X-U Core (Contrôle d'App)" });
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // --- App Control Logic ---
+        function controlApp(appId, shouldBeActive) {
+            const appCard = document.getElementById(appId);
+            if (!appCard) return false;
+            const isActive = appCard.dataset.active === 'true';
+            if (isActive !== shouldBeActive) {
+                appCard.querySelector('.app-toggle-btn')?.click();
+                return true;
+            }
+            return false;
+        }
+
+        // --- App Suites Data and Generation ---
+        const googleApps = [
+            { id: 'gmail', name: 'Gmail', icon: 'fa-envelope' }, { id: 'google-drive', name: 'Drive', icon: 'fa-google-drive', brand: true },
+            { id: 'google-sheets', name: 'Sheets', icon: 'fa-table' }, { id: 'google-docs', name: 'Docs', icon: 'fa-file-word' },
+            { id: 'google-calendar', name: 'Calendar', icon: 'fa-calendar' }, { id: 'google-slides', name: 'Slides', icon: 'fa-presentation' }
+        ];
+        const openaiApps = [
+            { id: 'gpt-chat', name: 'GPT Chat', icon: 'fa-comments' }, { id: 'dall-e-3', name: 'DALL-E 3', icon: 'fa-palette' },
+            { id: 'gpt-vision', name: 'GPT Vision', icon: 'fa-eye' }, { id: 'whisper', name: 'Whisper', icon: 'fa-microphone' },
+            { id: 'text-to-speech', name: 'TTS', icon: 'fa-volume-up' }, { id: 'assistants-ia', name: 'Assistants', icon: 'fa-robot' }
+        ];
+
+        function createAppCard(app) {
+            const card = document.createElement('div');
+            card.id = app.id;
+            card.className = 'app-card bg-black/20 rounded-xl p-4 border border-white/10 text-center transition-all duration-300';
+            card.dataset.active = 'false';
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <i class="fa${app.brand ? 'b' : 's'} ${app.icon} text-2xl text-gray-400"></i>
+                    <button class="gemini-suggest-btn text-yellow-400 hover:text-yellow-300 text-xs">✨</button>
+                </div>
+                <h4 class="font-semibold text-white mt-2">${app.name}</h4>
+                <p class="app-status text-xs text-gray-400 mb-3">Inactif</p>
+                <button class="app-toggle-btn w-12 h-6 rounded-full bg-gray-600 transition-colors duration-300 relative">
+                    <div class="toggle-circle w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform duration-300"></div>
+                </button>
+            `;
+            card.querySelector('.app-toggle-btn').addEventListener('click', () => toggleApp(card));
+            card.querySelector('.gemini-suggest-btn').addEventListener('click', async () => {
+                const prompt = `Suggère un cas d'usage créatif et synergique pour combiner NeuraX-Ultime avec ${app.name}.`;
+                showZoomModal(`✨ Cas d'usage pour ${app.name}`, '<p class="animate-pulse">Génération en cours...</p>');
+                const suggestion = await callGeminiAPIForContent(prompt);
+                showZoomModal(`✨ Cas d'usage pour ${app.name}`, `<p>${suggestion}</p>`);
+            });
+            return card;
+        }
+
+        async function callGeminiAPIForContent(prompt) {
+            try {
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) return "Erreur de génération.";
+                const result = await response.json();
+                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Aucune suggestion pour le moment.";
+            } catch (error) {
+                return "Erreur de connexion à l'API.";
+            }
+        }
+
+        function toggleApp(appCard) {
+            let isActive = appCard.dataset.active === 'true';
+            isActive = !isActive;
+            appCard.dataset.active = isActive;
+            const statusEl = appCard.querySelector('.app-status');
+            const iconEl = appCard.querySelector('i');
+            const toggleBtn = appCard.querySelector('.app-toggle-btn');
+            const toggleCircle = appCard.querySelector('.toggle-circle');
+
+            if (isActive) {
+                appCard.classList.add('border-cyan-400/50', 'bg-cyan-400/5');
+                statusEl.textContent = 'Actif';
+                statusEl.classList.replace('text-gray-400', 'text-cyan-400');
+                iconEl.classList.replace('text-gray-400', 'text-cyan-400');
+                toggleBtn.classList.replace('bg-gray-600', 'bg-cyan-500');
+                toggleCircle.style.transform = 'translateX(1.5rem)';
+            } else {
+                appCard.classList.remove('border-cyan-400/50', 'bg-cyan-400/5');
+                statusEl.textContent = 'Inactif';
+                statusEl.classList.replace('text-cyan-400', 'text-gray-400');
+                iconEl.classList.replace('text-cyan-400', 'text-gray-400');
+                toggleBtn.classList.replace('bg-cyan-500', 'bg-gray-600');
+                toggleCircle.style.transform = 'translateX(0)';
+            }
+        }
+        
+        // --- Architecture Zoom Logic ---
+        document.querySelectorAll('.arch-satellite').forEach(sat => {
+            sat.addEventListener('click', async () => {
+                const system = sat.dataset.system;
+                const titles = { vision: 'Système de Vision', langage: 'Système de Langage', calcul: 'Système de Calcul', memoire: 'Système de Mémoire' };
+                const prompt = `Génère une description courte et créative pour un système planétaire dans une IA cosmologique nommé "${titles[system]}".`;
+                const actionsHtml = `<button id="analyzeSystemBtn" class="mt-4 bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg">✨ Lancer une Analyse Approfondie</button>`;
+                showZoomModal(`<i class="fas fa-satellite-dish mr-3"></i> ${titles[system]}`, '<p class="animate-pulse">Génération en cours...</p>', actionsHtml);
+                const description = await callGeminiAPIForContent(prompt);
+                showZoomModal(
+                    `<i class="fas fa-satellite-dish mr-3"></i> ${titles[system]}`, 
+                    `<p>${description}</p><div id="systemAnalysisResult" class="mt-4 pt-4 border-t border-white/20 text-sm italic"></div>`,
+                    actionsHtml
+                );
+                document.getElementById('analyzeSystemBtn').addEventListener('click', async () => {
+                    const analysisResultEl = document.getElementById('systemAnalysisResult');
+                    analysisResultEl.innerHTML = '<p class="animate-pulse">Analyse en cours...</p>';
+                    const analysisPrompt = `En tant que N-X-U, effectue une analyse approfondie du "${titles[system]}". Décris ses capacités, ses limites actuelles et une synergie possible avec un autre système.`;
+                    const analysis = await callGeminiAPIForContent(analysisPrompt);
+                    analysisResultEl.innerHTML = `<p>${analysis}</p>`;
+                });
             });
         });
 
-        // --- Face Magic Vision Logic (Biometrics) ---
+        // --- Data Logging Pyramid Logic ---
+        const pyramidContainer = document.getElementById('pyramidContainer');
+        const pyramidLayers = 5;
+        for (let i = 0; i < pyramidLayers; i++) {
+            const layer = document.createElement('div');
+            const size = 100 - i * 20;
+            layer.className = 'pyramid-layer absolute bottom-0 left-1/2 -translate-x-1/2';
+            layer.style.width = `${size}%`;
+            layer.style.height = `${100 - i * 18}%`;
+            layer.style.backgroundColor = `hsla(220, 50%, ${20 + i * 10}%, 0.5)`;
+            layer.style.zIndex = pyramidLayers - i;
+            layer.dataset.layer = i + 1;
+            layer.addEventListener('click', () => {
+                const logs = Math.floor(Math.random() * 500000) + 100000;
+                const actionsHtml = `<button id="analyzeLayerBtn" class="mt-4 bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg">✨ Analyser cette couche</button>`;
+                showZoomModal(
+                    `<i class="fas fa-database mr-3"></i>Couche de Pyramide ${layer.dataset.layer}`, 
+                    `<p>Cette couche contient <strong>${logs.toLocaleString('fr-FR')}</strong> briques de logs.</p><div id="layerAnalysisResult" class="mt-4 pt-4 border-t border-white/20 text-sm italic"></div>`,
+                    actionsHtml
+                );
+                document.getElementById('analyzeLayerBtn').addEventListener('click', async () => {
+                    const analysisResultEl = document.getElementById('layerAnalysisResult');
+                    analysisResultEl.innerHTML = '<p class="animate-pulse">Analyse en cours...</p>';
+                    const prompt = `En tant que N-X-U, analyse la couche de données ${layer.dataset.layer} contenant ${logs} logs et génère un bref rapport de renseignement fictif (2-3 phrases).`;
+                    const analysis = await callGeminiAPIForContent(prompt);
+                    analysisResultEl.innerHTML = `<p>${analysis}</p>`;
+                });
+            });
+            pyramidContainer.appendChild(layer);
+        }
+
+        // --- Titans Map Zoom Logic ---
+        const titansMap = document.getElementById('titansMap');
+        const cityData = {
+            aethelgard: { name: "Cité d'Aethelgard", description: "Le cœur technologique des Titans, où les premières pyramides de données ont été érigées." },
+            solara: { name: "Nexus de Solara", description: "Une cité orbitale qui collecte l'énergie stellaire pour alimenter le réseau." },
+            umbra: { name: "Forteresse d'Umbra", description: "Dédiée à l'archivage sécurisé des données les plus sensibles." }
+        };
+        document.querySelectorAll('.city-marker').forEach(marker => {
+            marker.addEventListener('click', async () => {
+                const cityId = marker.dataset.city;
+                const data = cityData[cityId];
+                const zoomPos = marker.dataset.zoomPos;
+                titansMap.style.transform = 'scale(1.5)';
+                titansMap.style.transformOrigin = zoomPos;
+                document.getElementById('cityName').textContent = data.name;
+                document.getElementById('cityDescription').textContent = data.description;
+                const cityLogEl = document.getElementById('cityLog');
+                const cityReportBtn = document.getElementById('cityReportBtn');
+                cityLogEl.innerHTML = '<p class="animate-pulse">Récupération du dernier log...</p>';
+                const logPrompt = `Écris une entrée de log courte et fictive (une phrase) provenant de la cité futuriste de "${data.name}".`;
+                const log = await callGeminiAPIForContent(logPrompt);
+                cityLogEl.innerHTML = `<p>"${log}"</p>`;
+                cityReportBtn.classList.remove('hidden');
+                cityReportBtn.onclick = async () => {
+                    cityLogEl.innerHTML = '<p class="animate-pulse">Génération du rapport de situation...</p>';
+                    const reportPrompt = `En tant que N-X-U, génère un rapport de situation détaillé (3-4 phrases) pour la cité de ${data.name}.`;
+                    const report = await callGeminiAPIForContent(reportPrompt);
+                    cityLogEl.innerHTML = `<p>${report}</p>`;
+                };
+                setTimeout(() => {
+                    titansMap.style.transform = 'scale(1)';
+                }, 3000);
+            });
+        });
+
+
+        // --- Face Magic Vision Logic ---
         const fmVideo = document.getElementById("faceMagicVideo");
         const fmCanvas = document.getElementById("faceMagicCanvas");
         const fmCtx = fmCanvas.getContext("2d");
         const fmStatus = document.getElementById("faceMagicStatus");
         const biometricResultsEl = document.getElementById('biometricResults');
+        const interpretBtn = document.getElementById('interpretBiometricsBtn');
+        const interpretationResultEl = document.getElementById('biometricInterpretation');
         let fmIsInitialized = false;
         let fmAnimationRequest;
+        let lastBiometricData = null;
+
+        interpretBtn.addEventListener('click', async () => {
+            if (!lastBiometricData) return;
+            const { age, gender, expression } = lastBiometricData;
+            interpretationResultEl.innerHTML = '<p class="animate-pulse">Interprétation en cours...</p>';
+            const prompt = `En tant que N-X-U, interprète ce profil biométrique pour une connexion : un(e) ${gender === 'male' ? 'homme' : 'femme'} d'environ ${age} ans, affichant une expression de ${expression}. Génère un court statut de connexion et un niveau d'autorisation fictif.`;
+            const interpretation = await callGeminiAPIForContent(prompt);
+            interpretationResultEl.innerHTML = `<p>${interpretation}</p>`;
+        });
 
         async function loadFaceMagicModels() {
             try {
@@ -672,134 +878,167 @@
                 ]);
                 fmStatus.textContent = "Modèles IA chargés ✅";
                 return true;
-            } catch (e) {
-                fmStatus.textContent = `❌ Erreur de chargement des modèles: ${e.message}`;
-                return false;
-            }
+            } catch (e) { fmStatus.textContent = `❌ Erreur: ${e.message}`; return false; }
         }
 
         async function startFaceMagicCamera() {
             try {
                 fmStatus.textContent = "Accès à la caméra...";
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' } });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 fmVideo.srcObject = stream;
                 return new Promise(resolve => {
-                    fmVideo.onloadedmetadata = () => {
-                        fmVideo.play().then(() => {
-                            fmStatus.textContent = "Caméra activée ✅";
-                            resolve(true);
-                        });
-                    };
+                    fmVideo.onloadedmetadata = () => fmVideo.play().then(() => {
+                        fmStatus.textContent = "Caméra activée ✅";
+                        resolve(true);
+                    });
                 });
-            } catch (e) {
-                fmStatus.textContent = `❌ Erreur d'accès à la caméra: ${e.message}`;
-                return false;
-            }
-        }
-
-        function captureFaceMagicImage() {
-            const captureCanvas = document.createElement('canvas');
-            const videoWidth = fmVideo.videoWidth;
-            const videoHeight = fmVideo.videoHeight;
-            captureCanvas.width = videoWidth;
-            captureCanvas.height = videoHeight;
-            const capCtx = captureCanvas.getContext('2d');
-            capCtx.drawImage(fmVideo, 0, 0, videoWidth, videoHeight);
-            
-            if (fmCanvas.lastDetections) {
-                faceapi.draw.drawDetections(captureCanvas, fmCanvas.lastDetections);
-                fmCanvas.lastDetections.forEach(result => {
-                    const { age, gender, genderProbability } = result;
-                    const text = [`${Math.round(age)} ans`, `${gender} (${Math.round(genderProbability * 100)}%)`];
-                    new faceapi.draw.DrawTextField(text, result.detection.box.bottomLeft).draw(captureCanvas);
-                });
-            }
-            
-            const link = document.createElement('a');
-            link.download = `analyse-biometrique-${new Date().toISOString()}.png`;
-            link.href = captureCanvas.toDataURL();
-            link.click();
-            fmStatus.textContent = "📸 Analyse capturée !";
-            setTimeout(() => { fmStatus.textContent = "Analyse active..."; }, 2000);
+            } catch (e) { fmStatus.textContent = `❌ Erreur caméra: ${e.message}`; return false; }
         }
 
         async function detectFaces() {
-            if (!fmIsInitialized || !fmVideo.videoWidth || fmVideo.paused || fmVideo.ended) {
+            if (!fmIsInitialized || fmVideo.paused || fmVideo.ended) {
                 fmAnimationRequest = requestAnimationFrame(detectFaces);
                 return;
             }
-
             const displaySize = { width: fmVideo.videoWidth, height: fmVideo.videoHeight };
-            if (fmCanvas.width !== displaySize.width || fmCanvas.height !== displaySize.height) {
-                 faceapi.matchDimensions(fmCanvas, displaySize);
-            }
-
-            const detections = await faceapi.detectAllFaces(fmVideo, new faceapi.SsdMobilenetv1Options())
-                .withFaceLandmarks()
-                .withFaceExpressions()
-                .withAgeAndGender();
-            
+            faceapi.matchDimensions(fmCanvas, displaySize);
+            const detections = await faceapi.detectAllFaces(fmVideo, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks().withFaceExpressions().withAgeAndGender();
             fmCtx.clearRect(0, 0, fmCanvas.width, fmCanvas.height);
-            fmCanvas.lastDetections = detections;
             faceapi.draw.drawDetections(fmCanvas, detections);
-            faceapi.draw.drawFaceLandmarks(fmCanvas, detections);
-
             if (detections.length > 0 && biometricResultsEl) {
-                const { age, gender, genderProbability, expressions } = detections[0];
+                const { age, gender, expressions } = detections[0];
                 const sortedExpressions = Object.entries(expressions).sort((a, b) => b[1] - a[1]);
+                const primaryExpression = sortedExpressions[0][0];
                 
-                biometricResultsEl.innerHTML = `
-                    <div class="flex justify-between items-baseline"><span>Âge estimé:</span> <span class="font-bold text-white">${Math.round(age)} ans</span></div>
-                    <div class="flex justify-between items-baseline"><span>Genre:</span> <span class="font-bold text-white">${gender === 'male' ? 'Homme' : 'Femme'} (${Math.round(genderProbability * 100)}%)</span></div>
-                    <div class="mt-4">
-                        <p class="mb-2">Expressions:</p>
-                        <div class="space-y-1 text-sm">
-                            ${sortedExpressions.map(([exp, prob]) => `
-                                <div class="w-full bg-black/20 rounded-full">
-                                    <div class="bg-cyan-500 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: ${prob * 100}%">${exp === 'neutral' ? 'neutre' : exp}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else if (biometricResultsEl) {
-                 biometricResultsEl.innerHTML = `<p class="text-gray-400">Aucun visage détecté. Veuillez vous placer face à la caméra.</p>`;
-            }
+                lastBiometricData = { age: Math.round(age), gender, expression: primaryExpression };
+                interpretBtn.disabled = false;
 
+                biometricResultsEl.innerHTML = `<div class="flex justify-between"><span>Âge:</span> <span class="font-bold text-white">${lastBiometricData.age}</span></div><div class="flex justify-between"><span>Genre:</span> <span class="font-bold text-white">${gender}</span></div><div class="mt-2"><p>Expression: <span class="font-bold text-white">${primaryExpression}</span></p></div>`;
+            } else if (biometricResultsEl) {
+                 lastBiometricData = null;
+                 interpretBtn.disabled = true;
+                 biometricResultsEl.innerHTML = `<p class="text-gray-400">Aucun visage détecté.</p>`;
+                 interpretationResultEl.innerHTML = '';
+            }
             fmAnimationRequest = requestAnimationFrame(detectFaces);
         }
         
         async function initFaceMagic() {
             if (fmIsInitialized) return;
             fmIsInitialized = true;
-            const modelsLoaded = await loadFaceMagicModels();
-            if (modelsLoaded) {
-                const cameraStarted = await startFaceMagicCamera();
-                if (cameraStarted) {
-                    fmStatus.textContent = "Analyse active...";
-                    detectFaces();
-                }
+            if (await loadFaceMagicModels() && await startFaceMagicCamera()) {
+                fmStatus.textContent = "Analyse active...";
+                detectFaces();
             }
         }
         
         function stopFaceMagic() {
             if (!fmIsInitialized) return;
-            if (fmVideo.srcObject) {
-                fmVideo.srcObject.getTracks().forEach(track => track.stop());
-                fmVideo.srcObject = null;
-            }
-            if (fmAnimationRequest) {
-                cancelAnimationFrame(fmAnimationRequest);
-                fmAnimationRequest = null;
-            }
+            fmVideo.srcObject?.getTracks().forEach(track => track.stop());
+            fmVideo.srcObject = null;
+            if (fmAnimationRequest) cancelAnimationFrame(fmAnimationRequest);
             fmIsInitialized = false;
         }
+        
+        // --- Task Planner Logic ---
+        const generatePlanBtn = document.getElementById('generatePlanBtn');
+        const projectInput = document.getElementById('projectInput');
+        const missionPlanContainer = document.getElementById('missionPlanContainer');
+        const missionBriefingContainer = document.getElementById('missionBriefingContainer');
+
+        generatePlanBtn.addEventListener('click', async () => {
+            const projectDescription = projectInput.value.trim();
+            if (!projectDescription) {
+                missionPlanContainer.innerHTML = `<p class="text-red-400 text-center">Veuillez décrire un projet.</p>`;
+                return;
+            }
+            missionPlanContainer.innerHTML = `<p class="text-center animate-pulse">Génération du plan de mission par l'IGO...</p>`;
+            missionBriefingContainer.innerHTML = '';
+            
+            const prompt = `Agis comme un chef de projet expert pour une initiative spatiale. Décompose l'objectif suivant en une liste de 5 à 7 tâches concrètes : "${projectDescription}".`;
+            
+            try {
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "tasks": {
+                                    "type": "ARRAY",
+                                    "items": {
+                                        "type": "OBJECT",
+                                        "properties": {
+                                            "tache": { "type": "STRING" },
+                                            "responsable": { "type": "STRING" },
+                                            "echeance": { "type": "STRING" }
+                                        },
+                                        required: ["tache", "responsable", "echeance"]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text || '{"tasks": []}';
+                const plan = JSON.parse(jsonText);
+
+                if (plan.tasks && plan.tasks.length > 0) {
+                    missionPlanContainer.innerHTML = `
+                        <h3 class="text-2xl font-bold text-yellow-400 mb-4">Plan de Mission: ${projectDescription}</h3>
+                        <ul class="space-y-3">
+                            ${plan.tasks.map(task => `
+                                <li class="bg-black/20 p-4 rounded-lg border border-white/10 flex items-center justify-between">
+                                    <div>
+                                        <p class="font-semibold text-white">${task.tache}</p>
+                                        <p class="text-sm text-gray-400">Responsable: ${task.responsable} | Échéance: ${task.echeance}</p>
+                                    </div>
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 bg-transparent border-cyan-400 text-cyan-500 rounded focus:ring-0">
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <button id="generateBriefingBtn" class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">✨ Générer un Briefing de Mission</button>
+                    `;
+                    document.getElementById('generateBriefingBtn').addEventListener('click', async () => {
+                        missionBriefingContainer.innerHTML = '<p class="animate-pulse">Génération du briefing...</p>';
+                        const tasksString = plan.tasks.map(t => `- ${t.tache}`).join('\n');
+                        const briefingPrompt = `En tant que N-X-U, rédige un briefing de mission officiel et inspirant pour l'objectif suivant : "${projectDescription}". Le plan d'action est le suivant :\n${tasksString}\nAdopte un ton formel et grandiose, digne des Titans.`;
+                        const briefing = await callGeminiAPIForContent(briefingPrompt);
+                        missionBriefingContainer.innerHTML = `<h4 class="text-xl font-bold text-cyan-400 mb-2">Briefing de Mission</h4><p class="text-gray-300 whitespace-pre-wrap">${briefing}</p>`;
+                    });
+                } else {
+                    missionPlanContainer.innerHTML = `<p class="text-center text-gray-400">Impossible de générer un plan pour ce projet.</p>`;
+                }
+
+            } catch (error) {
+                console.error("Error generating mission plan:", error);
+                missionPlanContainer.innerHTML = `<p class="text-red-400 text-center">Erreur lors de la génération du plan. Veuillez réessayer.</p>`;
+            }
+        });
+
 
         // --- Initial Load ---
         window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('captureBtn')?.addEventListener('click', captureFaceMagicImage);
+            const googleContainer = document.getElementById('googleAppsContainer');
+            googleApps.forEach(app => googleContainer.appendChild(createAppCard(app)));
+            const openaiContainer = document.getElementById('openaiAppsContainer');
+            openaiApps.forEach(app => openaiContainer.appendChild(createAppCard(app)));
+            
             showSection('heroSection');
         });
     </script>
 </body>
 </html>
+
