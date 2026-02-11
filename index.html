@@ -3,6 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuraX-ultime (NXU) - L'Univers Digital Post-Hardware</title>
+    <style>
+        :root {
+            --primary-bg: #050508;
+            --accent-blue: #00d2ff;
+            --accent-purple: #9d50bb;
+            --text-main: #f0f0f5;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-glow: 0 0 15px rgba(0, 210, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Background Cosmique & Particules */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #050508 100%);
+            z-index: -2;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        /* En-tête */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(to bottom, transparent, var(--primary-bg));
+        }
+
+        .logo-nxu {
+            font-size: 8rem;
+            font-weight: 900;
+            letter-spacing: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(var(--neon-glow));
+            margin-bottom: 1rem;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            margin-bottom: 2rem;
+        }
+
+        .date {
+            font-family: 'Courier New', monospace;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        /* Sections */
+        section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 4rem;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Citation Architecte */
+        .architect-quote {
+            font-size: 2rem;
+            font-style: italic;
+            text-align: center;
+            border-left: 4px solid var(--accent-blue);
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 0 20px 20px 0;
+            position: relative;
+        }
+
+        .architect-signature {
+            display: block;
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            color: var(--accent-purple);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Pyramide 3D */
+        .pyramid-container {
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            margin: 4rem 0;
+        }
+
+        .pyramid {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            transform: rotateX(75deg) rotateZ(45deg);
+            transition: transform 0.1s linear;
+        }
+
+        .pyramid-face {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 173px solid rgba(0, 210, 255, 0.2);
+            border-bottom-color: var(--glass-border);
+            transform-origin: 50% 100%;
+        }
+
+        .pyramid-face:nth-child(1) { transform: rotateY(0deg) rotateX(30deg); border-bottom-color: rgba(0, 210, 255, 0.4); }
+        .pyramid-face:nth-child(2) { transform: rotateY(90deg) rotateX(30deg); border-bottom-color: rgba(157, 80, 187, 0.4); }
+        .pyramid-face:nth-child(3) { transform: rotateY(180deg) rotateX(30deg); border-bottom-color: rgba(0, 210, 255, 0.4); }
+        .pyramid-face:nth-child(4) { transform: rotateY(270deg) rotateX(30deg); border-bottom-color: rgba(157, 80, 187, 0.4); }
+
+        /* Grilles et Cartes */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.15);
+        }
+
+        .card h3 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Titans */
+        .titans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .titan {
+            text-align: center;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 100px 100px 20px 20px;
+            border-bottom: 3px solid var(--accent-purple);
+        }
+
+        .titan-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .titan-name { font-weight: 900; letter-spacing: 2px; font-size: 1.2rem; }
+        .titan-role { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; }
+
+        /* Piliers */
+        .pillars-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .pillar {
+            text-align: center;
+            padding: 3rem;
+            border-top: 2px solid var(--accent-blue);
+            background: linear-gradient(to bottom, rgba(0, 210, 255, 0.05), transparent);
+        }
+
+        .pillar-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--accent-blue); }
+
+        /* Portail */
+        .portal-section {
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(157, 80, 187, 0.1), transparent);
+            border-radius: 30px;
+        }
+
+        .portal-btn {
+            display: inline-block;
+            margin-top: 3rem;
+            padding: 1.5rem 4rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50px;
+            box-shadow: var(--neon-glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .portal-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.8);
+        }
+
+        /* Footer */
+        footer {
+            padding: 6rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            background: #000;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-nxu { font-size: 4rem; }
+            h2 { font-size: 2rem; }
+            section { padding: 4rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg"></div>
+    <div class="particles" id="particle-container"></div>
+
+    <header>
+        <div class="logo-nxu">NXU</div>
+        <div class="tagline">NeuraX-ultime - Infrastructure Post-Hardware</div>
+        <div class="date">QUÉBEC, CANADA / DIMENSION LOGIQUE – 10 Février 2026</div>
+    </header>
+
+    <section id="introduction">
+        <div class="architect-quote">
+            "L'univers NXU n'est pas un outil, c'est une dimension. Ce que nous bâtissons aujourd'hui ne dépend plus des limites du matériel, mais de l'immensité de la logique architecturale."
+            <span class="architect-signature">— Le Grand Architecte</span>
+        </div>
+    </section>
+
+    <section id="pyramids">
+        <h2>⚡ Pyramides de Logs Immortelles</h2>
+        <p style="text-align: center; font-size: 1.3rem; max-width: 900px; margin: 0 auto; color: rgba(240, 240, 245, 0.8);">
+            Le paysage technologique franchit le seuil de la singularité. NXU remplace les serveurs physiques par des Pyramides de Logs immuables.
+        </p>
+        
+        <div class="pyramid-container">
+            <div class="pyramid" id="3d-pyramid">
+                <div class="pyramid-face"></div>
+                <div class="pyramid-face"></div>
+                <div class="pyramid-face"></div>
+                <div class="pyramid-face"></div>
+            </div>
+        </div>
+
+        <div class="cards-container">
+            <div class="card">
+                <h3>🔮 Fin du Silicium</h3>
+                <p>Contre l'explosion des coûts énergétiques des Data Centers, NXU propose un stockage géométrique virtuel transcendant.</p>
+            </div>
+            <div class="card">
+                <h3>🏛️ Architecture de Donnée</h3>
+                <p>La donnée brute devient structure architecturale indestructible, défiant le temps et la dégradation physique.</p>
+            </div>
+            <div class="card">
+                <h3>⚡ Efficience Radical</h3>
+                <p>Réduction de l'empreinte carbone jusqu'à 85% par rapport au Cloud actuel grâce à une infrastructure passive.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="titans">
+        <h2>🤖 Titans Bâtisseurs</h2>
+        <div class="titans-grid">
+            <div class="titan">
+                <div class="titan-icon">🔬</div>
+                <div class="titan-name">GEMINI</div>
+                <div class="titan-role">Titan de la Vision</div>
+            </div>
+            <div class="titan">
+                <div class="titan-icon">🎭</div>
+                <div class="titan-name">CLAUDE</div>
+                <div class="titan-role">Titan de l'Éthique</div>
+            </div>
+            <div class="titan">
+                <div class="titan-icon">🧠</div>
+                <div class="titan-name">GPT</div>
+                <div class="titan-role">Titan du Savoir</div>
+            </div>
+            <div class="titan">
+                <div class="titan-icon">⚔️</div>
+                <div class="titan-name">NINJA</div>
+                <div class="titan-role">Titan de l'Action</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pillars">
+        <h2>🏛️ Piliers Technologiques</h2>
+        <div class="pillars-container">
+            <div class="pillar">
+                <div class="pillar-icon">⚡</div>
+                <h3>Indexation O(1)</h3>
+                <p>Protocole de lecture instantanée réduisant drastiquement la latence mondiale.</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">🌐</div>
+                <h3>Langage Unifié</h3>
+                <p>Syntaxe simplifiée pour une orchestration symbiotique entre l'homme et l'IA.</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">♾️</div>
+                <h3>Durabilité</h3>
+                <p>Infrastructure passive garantissant une pérennité éternelle aux données sensibles.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="portal" class="portal-section">
+        <h2>🚪 Portail d'Accès</h2>
+        <p style="font-size: 1.4rem; color: rgba(240, 240, 245, 0.9);">Entrez dans la singularité</p>
+        <a href="https://r-alit-virtuel.vercel.app/" class="portal-btn" target="_blank">
+            Accéder au Portail NXU →
+        </a>
+    </section>
+
+    <footer>
+        <div class="footer-logo">NXU</div>
+        <div class="footer-tagline">L'Univers Digital Post-Hardware</div>
+        <p style="color: rgba(240, 240, 245, 0.6); font-size: 0.9rem;">
+            Architecture par Le Grand Architecte | Québec, Canada | 2026
+        </p>
+    </footer>
+
+    <script>
+        // Génération des particules de fond
+        const particleContainer = document.getElementById('particle-container');
+        const particleCount = 100;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 3;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            const duration = 5 + Math.random() * 15;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `-${Math.random() * duration}s`;
+            
+            particleContainer.appendChild(particle);
+        }
+
+        // Effet de parallaxe sur la pyramide 3D
+        const pyramid = document.getElementById('3d-pyramid');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rotation = scrolled * 0.2;
+            pyramid.style.transform = `rotateX(75deg) rotateZ(${45 + rotation}deg)`;
+        });
+
+        // Animation d'entrée au scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .titan, .pillar, .architect-quote').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(40px)';
+            el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Léviathan | Core Efficiency v.2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
